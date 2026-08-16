@@ -1,0 +1,124 @@
+[
+  {
+    "id": "rare-home-mono",
+    "name": "Very rare home mono printing",
+    "mono_pages_per_month": 20,
+    "color_pages_per_month": 0,
+    "ownership_months": 60
+  },
+  {
+    "id": "home-light-color",
+    "name": "Home documents with occasional color",
+    "mono_pages_per_month": 40,
+    "color_pages_per_month": 10,
+    "ownership_months": 60,
+    "require_wifi": true
+  },
+  {
+    "id": "student-documents",
+    "name": "Student documents",
+    "mono_pages_per_month": 150,
+    "color_pages_per_month": 20,
+    "ownership_months": 60,
+    "require_wifi": true
+  },
+  {
+    "id": "teacher-mixed",
+    "name": "Teacher high-volume mixed printing",
+    "mono_pages_per_month": 500,
+    "color_pages_per_month": 100,
+    "ownership_months": 60,
+    "require_auto_duplex": true
+  },
+  {
+    "id": "small-office-mono",
+    "name": "Small office high-volume mono",
+    "mono_pages_per_month": 1500,
+    "color_pages_per_month": 0,
+    "ownership_months": 60,
+    "require_auto_duplex": true
+  },
+  {
+    "id": "home-mfp-wifi",
+    "name": "Home MFP with mandatory Wi-Fi",
+    "mono_pages_per_month": 80,
+    "color_pages_per_month": 20,
+    "ownership_months": 36,
+    "require_mfp": true,
+    "require_wifi": true
+  },
+  {
+    "id": "duplex-documents",
+    "name": "Document printing with mandatory duplex",
+    "mono_pages_per_month": 300,
+    "color_pages_per_month": 0,
+    "ownership_months": 60,
+    "require_auto_duplex": true
+  },
+  {
+    "id": "low-budget-long-horizon",
+    "name": "Low purchase budget and long ownership",
+    "mono_pages_per_month": 200,
+    "color_pages_per_month": 20,
+    "ownership_months": 60,
+    "max_purchase_price_rub": 25000
+  },
+  {
+    "id": "tco-priority",
+    "name": "Flexible purchase budget with TCO priority",
+    "mono_pages_per_month": 600,
+    "color_pages_per_month": 150,
+    "ownership_months": 60,
+    "require_wifi": true
+  },
+  {
+    "id": "weak-model-exclusion",
+    "name": "Workload intended to exclude weak models",
+    "mono_pages_per_month": 2500,
+    "color_pages_per_month": 0,
+    "ownership_months": 36,
+    "require_mfp": true,
+    "require_auto_duplex": true
+  },
+  {
+    "id": "micro-office-color",
+    "name": "Micro office color MFP",
+    "mono_pages_per_month": 400,
+    "color_pages_per_month": 100,
+    "ownership_months": 48,
+    "require_mfp": true,
+    "require_wifi": true,
+    "require_auto_duplex": true
+  },
+  {
+    "id": "family-schoolwork",
+    "name": "Family schoolwork and forms",
+    "mono_pages_per_month": 100,
+    "color_pages_per_month": 50,
+    "ownership_months": 48,
+    "require_mfp": true,
+    "require_wifi": true
+  },
+  {
+    "id": "mono-short-horizon",
+    "name": "Moderate mono printing for one year",
+    "mono_pages_per_month": 300,
+    "color_pages_per_month": 0,
+    "ownership_months": 12
+  },
+  {
+    "id": "color-short-horizon",
+    "name": "Moderate color printing for one year",
+    "mono_pages_per_month": 100,
+    "color_pages_per_month": 100,
+    "ownership_months": 12,
+    "require_wifi": true
+  },
+  {
+    "id": "zero-pages-control",
+    "name": "Zero-pages calculation control",
+    "mono_pages_per_month": 0,
+    "color_pages_per_month": 0,
+    "ownership_months": 60
+  }
+]
