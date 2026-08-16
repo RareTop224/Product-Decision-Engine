@@ -88,5 +88,134 @@
     ],
     "maintenance_data_status": "complete",
     "status": "active"
+  },
+  {
+    "id": "hp-laserjet-mfp-m141w",
+    "manufacturer": "HP",
+    "model": "LaserJet MFP M141w",
+    "mpn": "7MD74A",
+    "product_type": "mfp",
+    "print_technology": "laser",
+    "color_mode": "mono",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": 1000,
+    "expected_consumable_channels": [
+      "black"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "canon-isensys-mf272dw",
+    "manufacturer": "Canon",
+    "model": "i-SENSYS MF272dw",
+    "mpn": "5621C013",
+    "product_type": "mfp",
+    "print_technology": "laser",
+    "color_mode": "mono",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": 2000,
+    "expected_consumable_channels": [
+      "black"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "canon-isensys-mf655cdw",
+    "manufacturer": "Canon",
+    "model": "i-SENSYS MF655Cdw",
+    "mpn": "5158C004",
+    "product_type": "mfp",
+    "print_technology": "laser",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": 2500,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "manufacturer": "HP",
+    "model": "Color LaserJet Pro MFP 3303fdw",
+    "mpn": "499M8A",
+    "product_type": "mfp",
+    "print_technology": "laser",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": 2500,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "hp-deskjet-ink-advantage-2875",
+    "manufacturer": "HP",
+    "model": "DeskJet Ink Advantage 2875",
+    "mpn": "60K47C",
+    "product_type": "mfp",
+    "print_technology": "inkjet_cartridge",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": 100,
+    "expected_consumable_channels": [
+      "black",
+      "color"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "kyocera-ecosys-p2235dw",
+    "manufacturer": "Kyocera",
+    "model": "ECOSYS P2235dw",
+    "mpn": "1102RW3NL0",
+    "product_type": "printer",
+    "print_technology": "laser",
+    "color_mode": "mono",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "canon-pixma-g3411",
+    "manufacturer": "Canon",
+    "model": "PIXMA G3411",
+    "mpn": "2315C025",
+    "product_type": "mfp",
+    "print_technology": "ink_tank",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "not_published",
+    "status": "active"
   }
 ]

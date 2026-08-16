@@ -3,7 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from product_decision_engine.domain.catalog import Catalog, MissingCriticalData
-from product_decision_engine.domain.models import Product, ProductConsumableRole
+from product_decision_engine.domain.models import (
+    MaintenanceDataStatus,
+    Product,
+    ProductConsumableRole,
+    VerificationStatus,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -12,6 +17,8 @@ class EvidenceAudit:
     required_facts: int
     verified_facts: int
     missing: tuple[str, ...]
+    publication_gaps: tuple[str, ...]
+    conflicts: tuple[str, ...]
 
     @property
     def coverage_percent(self) -> int:
@@ -57,9 +64,29 @@ def audit_product(catalog: Catalog, product: Product) -> EvidenceAudit:
         for entity_type, entity_id, field_name in unique_requirements
         if not catalog.has_verified_evidence(entity_type, entity_id, field_name)
     )
+    publication_gaps: list[str] = []
+    if product.recommended_monthly_volume is None:
+        publication_gaps.append("recommended_monthly_volume")
+    if product.maintenance_data_status == MaintenanceDataStatus.NOT_PUBLISHED:
+        publication_gaps.append("maintenance_schedule")
+
+    scoped_entities = {("product", product.id)}
+    for link in catalog.links(product.id):
+        scoped_entities.add(("product_consumable", link.id))
+        scoped_entities.add(("consumable", link.consumable_id))
+    conflicts = tuple(
+        sorted(
+            f"{item.entity_type}:{item.entity_id}.{item.field_name}: {item.notes or item.source_name}"
+            for item in catalog.evidence
+            if item.verification_status == VerificationStatus.CONFLICT
+            and (item.entity_type, item.entity_id) in scoped_entities
+        )
+    )
     return EvidenceAudit(
         product_id=product.id,
         required_facts=len(unique_requirements),
         verified_facts=len(unique_requirements) - len(missing),
         missing=missing,
+        publication_gaps=tuple(publication_gaps),
+        conflicts=conflicts,
     )

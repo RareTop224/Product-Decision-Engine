@@ -204,5 +204,302 @@
     "channel": "toner_collection_unit",
     "page_scope": "all_pages",
     "notes": "One unit is supplied with the printer; replacement yield is 7,000 pages."
+  },
+  {
+    "id": "link-hp-m141w-starter-black",
+    "product_id": "hp-laserjet-mfp-m141w",
+    "consumable_id": "hp-m141w-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-hp-m141w-replacement-black",
+    "product_id": "hp-laserjet-mfp-m141w",
+    "consumable_id": "hp-w1500a",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "notes": "Canonical OEM replacement for the Phase 0 dataset."
+  },
+  {
+    "id": "link-canon-mf272dw-starter-black",
+    "product_id": "canon-isensys-mf272dw",
+    "consumable_id": "canon-mf272dw-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-mf272dw-replacement-black",
+    "product_id": "canon-isensys-mf272dw",
+    "consumable_id": "canon-071h",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "notes": "High-yield OEM cartridge selected as the canonical Phase 0 replacement."
+  },
+  {
+    "id": "link-canon-mf655cdw-starter-black",
+    "product_id": "canon-isensys-mf655cdw",
+    "consumable_id": "canon-mf655cdw-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-mf655cdw-replacement-black",
+    "product_id": "canon-isensys-mf655cdw",
+    "consumable_id": "canon-067h-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "notes": "Black toner is charged against all printed pages."
+  },
+  {
+    "id": "link-canon-mf655cdw-starter-cyan",
+    "product_id": "canon-isensys-mf655cdw",
+    "consumable_id": "canon-mf655cdw-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-mf655cdw-replacement-cyan",
+    "product_id": "canon-isensys-mf655cdw",
+    "consumable_id": "canon-067h-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages",
+    "notes": "CMY calibration and incidental mono-page consumption are not modeled."
+  },
+  {
+    "id": "link-canon-mf655cdw-starter-magenta",
+    "product_id": "canon-isensys-mf655cdw",
+    "consumable_id": "canon-mf655cdw-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-mf655cdw-replacement-magenta",
+    "product_id": "canon-isensys-mf655cdw",
+    "consumable_id": "canon-067h-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages",
+    "notes": "CMY calibration and incidental mono-page consumption are not modeled."
+  },
+  {
+    "id": "link-canon-mf655cdw-starter-yellow",
+    "product_id": "canon-isensys-mf655cdw",
+    "consumable_id": "canon-mf655cdw-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-mf655cdw-replacement-yellow",
+    "product_id": "canon-isensys-mf655cdw",
+    "consumable_id": "canon-067h-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages",
+    "notes": "CMY calibration and incidental mono-page consumption are not modeled."
+  },
+  {
+    "id": "link-hp-3303fdw-starter-black",
+    "product_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "consumable_id": "hp-3303fdw-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-hp-3303fdw-replacement-black",
+    "product_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "consumable_id": "hp-222x-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "notes": "Black toner is charged against all printed pages."
+  },
+  {
+    "id": "link-hp-3303fdw-starter-cyan",
+    "product_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "consumable_id": "hp-3303fdw-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-3303fdw-replacement-cyan",
+    "product_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "consumable_id": "hp-222x-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages",
+    "notes": "CMY calibration and incidental mono-page consumption are not modeled."
+  },
+  {
+    "id": "link-hp-3303fdw-starter-magenta",
+    "product_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "consumable_id": "hp-3303fdw-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-3303fdw-replacement-magenta",
+    "product_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "consumable_id": "hp-222x-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages",
+    "notes": "CMY calibration and incidental mono-page consumption are not modeled."
+  },
+  {
+    "id": "link-hp-3303fdw-starter-yellow",
+    "product_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "consumable_id": "hp-3303fdw-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-3303fdw-replacement-yellow",
+    "product_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "consumable_id": "hp-222x-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages",
+    "notes": "CMY calibration and incidental mono-page consumption are not modeled."
+  },
+  {
+    "id": "link-hp-2875-starter-black",
+    "product_id": "hp-deskjet-ink-advantage-2875",
+    "consumable_id": "hp-2875-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-hp-2875-replacement-black",
+    "product_id": "hp-deskjet-ink-advantage-2875",
+    "consumable_id": "hp-653-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-hp-2875-starter-color",
+    "product_id": "hp-deskjet-ink-advantage-2875",
+    "consumable_id": "hp-2875-inbox-tricolor",
+    "role": "starter",
+    "channel": "color",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-2875-replacement-color",
+    "product_id": "hp-deskjet-ink-advantage-2875",
+    "consumable_id": "hp-653-tricolor",
+    "role": "replacement",
+    "channel": "color",
+    "page_scope": "color_pages",
+    "notes": "The tri-color cartridge is modeled as one indivisible color channel."
+  },
+  {
+    "id": "link-kyocera-p2235dw-starter-black",
+    "product_id": "kyocera-ecosys-p2235dw",
+    "consumable_id": "kyocera-p2235dw-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-kyocera-p2235dw-replacement-black",
+    "product_id": "kyocera-ecosys-p2235dw",
+    "consumable_id": "kyocera-tk-1150",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-kyocera-p2235dw-maintenance-kit",
+    "product_id": "kyocera-ecosys-p2235dw",
+    "consumable_id": "kyocera-mk-1150",
+    "role": "maintenance",
+    "channel": "maintenance_kit",
+    "page_scope": "all_pages",
+    "notes": "An installed maintenance kit covers the first published 100,000 pages."
+  },
+  {
+    "id": "link-canon-g3411-starter-black",
+    "product_id": "canon-pixma-g3411",
+    "consumable_id": "canon-g3411-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "quantity_in_box": 2,
+    "notes": "The exact 2315C025 bundle includes two black bottles; each is rated for 6,000 pages."
+  },
+  {
+    "id": "link-canon-g3411-replacement-black",
+    "product_id": "canon-pixma-g3411",
+    "consumable_id": "canon-gi-490-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-g3411-starter-cyan",
+    "product_id": "canon-pixma-g3411",
+    "consumable_id": "canon-g3411-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g3411-replacement-cyan",
+    "product_id": "canon-pixma-g3411",
+    "consumable_id": "canon-gi-490-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages",
+    "notes": "Each color bottle is required for the published composite-color yield."
+  },
+  {
+    "id": "link-canon-g3411-starter-magenta",
+    "product_id": "canon-pixma-g3411",
+    "consumable_id": "canon-g3411-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g3411-replacement-magenta",
+    "product_id": "canon-pixma-g3411",
+    "consumable_id": "canon-gi-490-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages",
+    "notes": "Each color bottle is required for the published composite-color yield."
+  },
+  {
+    "id": "link-canon-g3411-starter-yellow",
+    "product_id": "canon-pixma-g3411",
+    "consumable_id": "canon-g3411-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g3411-replacement-yellow",
+    "product_id": "canon-pixma-g3411",
+    "consumable_id": "canon-gi-490-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages",
+    "notes": "Each color bottle is required for the published composite-color yield."
   }
 ]

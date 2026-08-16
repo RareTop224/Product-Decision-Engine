@@ -142,5 +142,189 @@
     "price_rub": 2591,
     "source_id": "evidence-price-hp-5kz38a",
     "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-m141w-device",
+    "entity_type": "product",
+    "entity_id": "hp-laserjet-mfp-m141w",
+    "price_rub": 18980,
+    "source_id": "evidence-price-hp-m141w-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-mf272dw-device",
+    "entity_type": "product",
+    "entity_id": "canon-isensys-mf272dw",
+    "price_rub": 33460,
+    "source_id": "evidence-price-canon-mf272dw-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-mf655cdw-device",
+    "entity_type": "product",
+    "entity_id": "canon-isensys-mf655cdw",
+    "price_rub": 51450,
+    "source_id": "evidence-price-canon-mf655cdw-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-067h-black",
+    "entity_type": "consumable",
+    "entity_id": "canon-067h-black",
+    "price_rub": 9860,
+    "source_id": "evidence-price-canon-067h-black",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-067h-cyan",
+    "entity_type": "consumable",
+    "entity_id": "canon-067h-cyan",
+    "price_rub": 9220,
+    "source_id": "evidence-price-canon-067h-cyan",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-067h-magenta",
+    "entity_type": "consumable",
+    "entity_id": "canon-067h-magenta",
+    "price_rub": 7190,
+    "source_id": "evidence-price-canon-067h-magenta",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-067h-yellow",
+    "entity_type": "consumable",
+    "entity_id": "canon-067h-yellow",
+    "price_rub": 9220,
+    "source_id": "evidence-price-canon-067h-yellow",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-3303fdw-device",
+    "entity_type": "product",
+    "entity_id": "hp-color-laserjet-pro-mfp-3303fdw",
+    "price_rub": 62477,
+    "source_id": "evidence-price-hp-3303fdw-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-222x-black",
+    "entity_type": "consumable",
+    "entity_id": "hp-222x-black",
+    "price_rub": 12103,
+    "source_id": "evidence-price-hp-222x-black",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-222x-cyan",
+    "entity_type": "consumable",
+    "entity_id": "hp-222x-cyan",
+    "price_rub": 13249,
+    "source_id": "evidence-price-hp-222x-cyan",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-222x-magenta",
+    "entity_type": "consumable",
+    "entity_id": "hp-222x-magenta",
+    "price_rub": 13249,
+    "source_id": "evidence-price-hp-222x-magenta",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-222x-yellow",
+    "entity_type": "consumable",
+    "entity_id": "hp-222x-yellow",
+    "price_rub": 13249,
+    "source_id": "evidence-price-hp-222x-yellow",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-2875-device",
+    "entity_type": "product",
+    "entity_id": "hp-deskjet-ink-advantage-2875",
+    "price_rub": 7760,
+    "source_id": "evidence-price-hp-2875-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-653-black",
+    "entity_type": "consumable",
+    "entity_id": "hp-653-black",
+    "price_rub": 2060,
+    "source_id": "evidence-price-hp-653-black",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-653-tricolor",
+    "entity_type": "consumable",
+    "entity_id": "hp-653-tricolor",
+    "price_rub": 1660,
+    "source_id": "evidence-price-hp-653-tricolor",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-kyocera-p2235dw-device",
+    "entity_type": "product",
+    "entity_id": "kyocera-ecosys-p2235dw",
+    "price_rub": 39900,
+    "source_id": "evidence-price-kyocera-p2235dw-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-kyocera-tk-1150",
+    "entity_type": "consumable",
+    "entity_id": "kyocera-tk-1150",
+    "price_rub": 3990,
+    "source_id": "evidence-price-kyocera-tk-1150",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-kyocera-mk-1150",
+    "entity_type": "consumable",
+    "entity_id": "kyocera-mk-1150",
+    "price_rub": 19590,
+    "source_id": "evidence-price-kyocera-mk-1150",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-g3411-device",
+    "entity_type": "product",
+    "entity_id": "canon-pixma-g3411",
+    "price_rub": 21150,
+    "source_id": "evidence-price-canon-g3411-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-gi-490-black",
+    "entity_type": "consumable",
+    "entity_id": "canon-gi-490-black",
+    "price_rub": 1080,
+    "source_id": "evidence-price-canon-gi-490-black",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-gi-490-cyan",
+    "entity_type": "consumable",
+    "entity_id": "canon-gi-490-cyan",
+    "price_rub": 1260,
+    "source_id": "evidence-price-canon-gi-490-cyan",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-gi-490-magenta",
+    "entity_type": "consumable",
+    "entity_id": "canon-gi-490-magenta",
+    "price_rub": 680,
+    "source_id": "evidence-price-canon-gi-490-magenta",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-gi-490-yellow",
+    "entity_type": "consumable",
+    "entity_id": "canon-gi-490-yellow",
+    "price_rub": 1240,
+    "source_id": "evidence-price-canon-gi-490-yellow",
+    "observed_at": "2026-08-16"
   }
 ]
