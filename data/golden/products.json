@@ -364,5 +364,193 @@
     ],
     "maintenance_data_status": "complete",
     "status": "active"
+  },
+  {
+    "id": "canon-pixma-g1411",
+    "manufacturer": "Canon",
+    "model": "PIXMA G1411",
+    "mpn": "2314C025",
+    "product_type": "printer",
+    "print_technology": "ink_tank",
+    "color_mode": "color",
+    "wifi": false,
+    "auto_duplex": false,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "not_published",
+    "status": "active"
+  },
+  {
+    "id": "canon-pixma-g2411",
+    "manufacturer": "Canon",
+    "model": "PIXMA G2411",
+    "mpn": "2313C025",
+    "product_type": "mfp",
+    "print_technology": "ink_tank",
+    "color_mode": "color",
+    "wifi": false,
+    "auto_duplex": false,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "not_published",
+    "status": "active"
+  },
+  {
+    "id": "brother-dcp-t420w",
+    "manufacturer": "Brother",
+    "model": "DCP-T420W",
+    "product_type": "mfp",
+    "print_technology": "ink_tank",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "not_published",
+    "status": "active"
+  },
+  {
+    "id": "brother-mfc-t920dw",
+    "manufacturer": "Brother",
+    "model": "MFC-T920DW",
+    "product_type": "mfp",
+    "print_technology": "ink_tank",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "not_published",
+    "status": "active"
+  },
+  {
+    "id": "hp-smart-tank-580",
+    "manufacturer": "HP",
+    "model": "Smart Tank 580",
+    "mpn": "1F3Y2A",
+    "product_type": "mfp",
+    "print_technology": "ink_tank",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": 800,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "not_published",
+    "status": "active"
+  },
+  {
+    "id": "hp-smart-tank-720",
+    "manufacturer": "HP",
+    "model": "Smart Tank 720",
+    "mpn": "6UU46A",
+    "product_type": "mfp",
+    "print_technology": "ink_tank",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": 800,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "not_published",
+    "status": "active"
+  },
+  {
+    "id": "canon-isensys-lbp6030b",
+    "manufacturer": "Canon",
+    "model": "i-SENSYS LBP6030B",
+    "mpn": "8468B006",
+    "product_type": "printer",
+    "print_technology": "laser",
+    "color_mode": "mono",
+    "wifi": false,
+    "auto_duplex": false,
+    "recommended_monthly_volume": 800,
+    "expected_consumable_channels": [
+      "black"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "xerox-b230",
+    "manufacturer": "Xerox",
+    "model": "B230",
+    "mpn": "B230V_DNI",
+    "product_type": "printer",
+    "print_technology": "laser",
+    "color_mode": "mono",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": 2500,
+    "expected_consumable_channels": [
+      "black"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "canon-pixma-ts3640",
+    "manufacturer": "Canon",
+    "model": "PIXMA TS3640",
+    "mpn": "6670C007",
+    "product_type": "mfp",
+    "print_technology": "inkjet_cartridge",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black",
+      "color"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "canon-pixma-ts7440a",
+    "manufacturer": "Canon",
+    "model": "PIXMA TS7440a",
+    "mpn": "4460C057",
+    "product_type": "mfp",
+    "print_technology": "inkjet_cartridge",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black",
+      "color"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
   }
 ]

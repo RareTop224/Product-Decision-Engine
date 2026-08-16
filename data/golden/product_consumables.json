@@ -850,5 +850,499 @@
     "role": "maintenance",
     "channel": "waste_toner",
     "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-g1411-starter-black",
+    "product_id": "canon-pixma-g1411",
+    "consumable_id": "canon-g1411-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "quantity_in_box": 2
+  },
+  {
+    "id": "link-canon-g1411-replacement-black",
+    "product_id": "canon-pixma-g1411",
+    "consumable_id": "canon-gi-490-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-g1411-starter-cyan",
+    "product_id": "canon-pixma-g1411",
+    "consumable_id": "canon-g1411-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g1411-replacement-cyan",
+    "product_id": "canon-pixma-g1411",
+    "consumable_id": "canon-gi-490-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g1411-starter-magenta",
+    "product_id": "canon-pixma-g1411",
+    "consumable_id": "canon-g1411-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g1411-replacement-magenta",
+    "product_id": "canon-pixma-g1411",
+    "consumable_id": "canon-gi-490-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g1411-starter-yellow",
+    "product_id": "canon-pixma-g1411",
+    "consumable_id": "canon-g1411-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g1411-replacement-yellow",
+    "product_id": "canon-pixma-g1411",
+    "consumable_id": "canon-gi-490-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g2411-starter-black",
+    "product_id": "canon-pixma-g2411",
+    "consumable_id": "canon-g2411-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "quantity_in_box": 2
+  },
+  {
+    "id": "link-canon-g2411-replacement-black",
+    "product_id": "canon-pixma-g2411",
+    "consumable_id": "canon-gi-490-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-g2411-starter-cyan",
+    "product_id": "canon-pixma-g2411",
+    "consumable_id": "canon-g2411-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g2411-replacement-cyan",
+    "product_id": "canon-pixma-g2411",
+    "consumable_id": "canon-gi-490-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g2411-starter-magenta",
+    "product_id": "canon-pixma-g2411",
+    "consumable_id": "canon-g2411-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g2411-replacement-magenta",
+    "product_id": "canon-pixma-g2411",
+    "consumable_id": "canon-gi-490-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g2411-starter-yellow",
+    "product_id": "canon-pixma-g2411",
+    "consumable_id": "canon-g2411-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-g2411-replacement-yellow",
+    "product_id": "canon-pixma-g2411",
+    "consumable_id": "canon-gi-490-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t420-starter-black",
+    "product_id": "brother-dcp-t420w",
+    "consumable_id": "brother-btd60bk",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-brother-t420-replacement-black",
+    "product_id": "brother-dcp-t420w",
+    "consumable_id": "brother-btd60bk",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-brother-t420-starter-cyan",
+    "product_id": "brother-dcp-t420w",
+    "consumable_id": "brother-bt5000c",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t420-replacement-cyan",
+    "product_id": "brother-dcp-t420w",
+    "consumable_id": "brother-bt5000c",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t420-starter-magenta",
+    "product_id": "brother-dcp-t420w",
+    "consumable_id": "brother-bt5000m",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t420-replacement-magenta",
+    "product_id": "brother-dcp-t420w",
+    "consumable_id": "brother-bt5000m",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t420-starter-yellow",
+    "product_id": "brother-dcp-t420w",
+    "consumable_id": "brother-bt5000y",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t420-replacement-yellow",
+    "product_id": "brother-dcp-t420w",
+    "consumable_id": "brother-bt5000y",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t920-starter-black",
+    "product_id": "brother-mfc-t920dw",
+    "consumable_id": "brother-btd60bk",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "quantity_in_box": 2
+  },
+  {
+    "id": "link-brother-t920-replacement-black",
+    "product_id": "brother-mfc-t920dw",
+    "consumable_id": "brother-btd60bk",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-brother-t920-starter-cyan",
+    "product_id": "brother-mfc-t920dw",
+    "consumable_id": "brother-bt5000c",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t920-replacement-cyan",
+    "product_id": "brother-mfc-t920dw",
+    "consumable_id": "brother-bt5000c",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t920-starter-magenta",
+    "product_id": "brother-mfc-t920dw",
+    "consumable_id": "brother-bt5000m",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t920-replacement-magenta",
+    "product_id": "brother-mfc-t920dw",
+    "consumable_id": "brother-bt5000m",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t920-starter-yellow",
+    "product_id": "brother-mfc-t920dw",
+    "consumable_id": "brother-bt5000y",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t920-replacement-yellow",
+    "product_id": "brother-mfc-t920dw",
+    "consumable_id": "brother-bt5000y",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-580-starter-black",
+    "product_id": "hp-smart-tank-580",
+    "consumable_id": "hp-gt53xl-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "quantity_in_box": 3
+  },
+  {
+    "id": "link-hp-smart-tank-580-replacement-black",
+    "product_id": "hp-smart-tank-580",
+    "consumable_id": "hp-gt53xl-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-580-starter-cyan",
+    "product_id": "hp-smart-tank-580",
+    "consumable_id": "hp-smart-tank-580-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-580-replacement-cyan",
+    "product_id": "hp-smart-tank-580",
+    "consumable_id": "hp-gt52-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-580-starter-magenta",
+    "product_id": "hp-smart-tank-580",
+    "consumable_id": "hp-smart-tank-580-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-580-replacement-magenta",
+    "product_id": "hp-smart-tank-580",
+    "consumable_id": "hp-gt52-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-580-starter-yellow",
+    "product_id": "hp-smart-tank-580",
+    "consumable_id": "hp-smart-tank-580-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-580-replacement-yellow",
+    "product_id": "hp-smart-tank-580",
+    "consumable_id": "hp-gt52-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-720-starter-black",
+    "product_id": "hp-smart-tank-720",
+    "consumable_id": "hp-gt53xl-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "quantity_in_box": 3
+  },
+  {
+    "id": "link-hp-smart-tank-720-replacement-black",
+    "product_id": "hp-smart-tank-720",
+    "consumable_id": "hp-gt53xl-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-720-starter-cyan",
+    "product_id": "hp-smart-tank-720",
+    "consumable_id": "hp-gt52-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-720-replacement-cyan",
+    "product_id": "hp-smart-tank-720",
+    "consumable_id": "hp-gt52-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-720-starter-magenta",
+    "product_id": "hp-smart-tank-720",
+    "consumable_id": "hp-gt52-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-720-replacement-magenta",
+    "product_id": "hp-smart-tank-720",
+    "consumable_id": "hp-gt52-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-720-starter-yellow",
+    "product_id": "hp-smart-tank-720",
+    "consumable_id": "hp-gt52-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-smart-tank-720-replacement-yellow",
+    "product_id": "hp-smart-tank-720",
+    "consumable_id": "hp-gt52-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-lbp6030-starter-black",
+    "product_id": "canon-isensys-lbp6030b",
+    "consumable_id": "canon-lbp6030-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-lbp6030-replacement-black",
+    "product_id": "canon-isensys-lbp6030b",
+    "consumable_id": "canon-cartridge-725",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-xerox-b230-starter-black",
+    "product_id": "xerox-b230",
+    "consumable_id": "xerox-b230-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-xerox-b230-replacement-black",
+    "product_id": "xerox-b230",
+    "consumable_id": "xerox-006r04404",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-xerox-b230-maintenance-drum",
+    "product_id": "xerox-b230",
+    "consumable_id": "xerox-013r00691",
+    "role": "maintenance",
+    "channel": "drum",
+    "page_scope": "all_pages",
+    "notes": "Published 12,000-page approximate yield varies with job run length, media size/orientation and print mode."
+  },
+  {
+    "id": "link-canon-ts3640-starter-black",
+    "product_id": "canon-pixma-ts3640",
+    "consumable_id": "canon-pg-445",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-ts3640-replacement-black",
+    "product_id": "canon-pixma-ts3640",
+    "consumable_id": "canon-pg-445",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-ts3640-starter-color",
+    "product_id": "canon-pixma-ts3640",
+    "consumable_id": "canon-cl-446",
+    "role": "starter",
+    "channel": "color",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-ts3640-replacement-color",
+    "product_id": "canon-pixma-ts3640",
+    "consumable_id": "canon-cl-446",
+    "role": "replacement",
+    "channel": "color",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-ts7440-starter-black",
+    "product_id": "canon-pixma-ts7440a",
+    "consumable_id": "canon-pg-460",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-ts7440-replacement-black",
+    "product_id": "canon-pixma-ts7440a",
+    "consumable_id": "canon-pg-460",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-ts7440-starter-color",
+    "product_id": "canon-pixma-ts7440a",
+    "consumable_id": "canon-cl-461",
+    "role": "starter",
+    "channel": "color",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-canon-ts7440-replacement-color",
+    "product_id": "canon-pixma-ts7440a",
+    "consumable_id": "canon-cl-461",
+    "role": "replacement",
+    "channel": "color",
+    "page_scope": "color_pages"
   }
 ]

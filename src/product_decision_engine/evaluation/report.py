@@ -129,6 +129,39 @@ def _product_name(product: Product) -> str:
     return f"{product.manufacturer} {product.model}"
 
 
+def _economic_configuration_signature(
+    catalog: Catalog,
+    product: Product,
+) -> tuple[tuple[object, ...], ...]:
+    """Describe TCO inputs without treating model-specific starter IDs as diversity."""
+    signature: list[tuple[object, ...]] = []
+    for link in catalog.links(product.id):
+        consumable = catalog.consumable(link.consumable_id)
+        if link.role == ProductConsumableRole.STARTER:
+            item_identity: tuple[object, ...] = (
+                "starter_capacity",
+                consumable.yield_value * link.quantity_in_box,
+            )
+        else:
+            item_identity = (
+                consumable.part_number,
+                consumable.yield_value,
+                link.quantity_in_box,
+            )
+        signature.append(
+            (
+                link.role.value,
+                link.channel,
+                link.page_scope.value,
+                link.mono_page_weight,
+                link.color_page_weight,
+                link.installed_yield_value,
+                *item_identity,
+            )
+        )
+    return tuple(sorted(signature, key=repr))
+
+
 def _recommendation_sources(
     catalog: Catalog,
     product: Product,
@@ -283,6 +316,11 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         if result.purchase_price_winner != result.decision_engine_winner
     )
     competitive_changed = tuple(result for result in changed if result.candidate_count >= 2)
+    simplified_changed = tuple(
+        result
+        for result in complete
+        if result.simplified_tco_winner != result.decision_engine_winner
+    )
     savings = tuple(
         result.purchase_price_winner_tco.total_cost_rub
         - result.decision_engine_winner_tco.total_cost_rub
@@ -313,6 +351,14 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         if result.decision_engine_winner is not None
     )
     most_common_winner = winner_counts.most_common(1)[0] if winner_counts else None
+    purchase_winner_counts = Counter(
+        result.purchase_price_winner.id
+        for result in complete
+        if result.purchase_price_winner is not None
+    )
+    most_common_purchase_winner = (
+        purchase_winner_counts.most_common(1)[0] if purchase_winner_counts else None
+    )
     winner_brand_counts = Counter(
         result.decision_engine_winner.manufacturer
         for result in complete
@@ -352,8 +398,28 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         (item.entity_type, item.entity_id) for item in catalog.prices
     )
     repeated_price_entities = sum(count >= 2 for count in price_entity_counts.values())
+    economic_configurations = {
+        _economic_configuration_signature(catalog, product)
+        for product in catalog.products
+    }
     execution_viable = bool(scenarios) and len(competitive) == len(scenarios)
     early_value_signal = bool(competitive_changed) and len(sensitivity_winner_ids) >= 2
+    dataset_ready = (
+        len(catalog.products) >= 30
+        and len(scenarios) >= 10
+        and len(complete) == len(scenarios)
+        and all(not audit_product(catalog, product).missing for product in catalog.products)
+    )
+    if not dataset_ready:
+        phase0_status = "INCOMPLETE"
+    elif not execution_viable:
+        phase0_status = "REASSESS"
+    elif not competitive_changed:
+        phase0_status = "NO-GO"
+    elif not early_value_signal:
+        phase0_status = "REASSESS"
+    else:
+        phase0_status = "GO"
 
     lines = [
         "# Отчёт об оценке Фазы 0",
@@ -366,9 +432,7 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         f"- Задано сценариев: {len(scenarios)} / целевые 10–15",
         f"- Сценариев с рассчитанным победителем: {len(complete)} / {len(scenarios)}",
         f"- Конкурентных сценариев (не менее двух кандидатов): {len(competitive)} / {len(scenarios)}",
-        "- Статус Фазы 0: `INCOMPLETE` — данных пока недостаточно для итогового решения"
-        if len(catalog.products) < 30
-        else "- Статус Фазы 0: требуется итоговая оценка `GO` / `REASSESS` / `NO-GO`",
+        f"- Статус Фазы 0: `{phase0_status}`",
         "",
         "## Состав промежуточной выборки",
         "",
@@ -386,6 +450,7 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         + ", ".join(
             f"`{name}` — {count}" for name, count in sorted(color_mode_counts.items())
         ),
+        f"- Уникальных экономических конфигураций расходников: {len(economic_configurations)} / {len(catalog.products)} моделей",
         f"- Моделей с публикационными пробелами: {publication_gap_products}",
         f"- Моделей с зафиксированным конфликтом источников: {conflict_products}",
         "",
@@ -393,6 +458,7 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         "",
         f"- Победитель изменился относительно выбора по цене покупки: {len(changed)} / {len(complete)} ({_percent(len(changed), len(complete))})",
         f"- Смена победителя в конкурентных сценариях: {len(competitive_changed)} / {len(competitive)} ({_percent(len(competitive_changed), len(competitive))})",
+        f"- Полный расчёт меняет победителя упрощённого TCO: {len(simplified_changed)} / {len(complete)} ({_percent(len(simplified_changed), len(complete))})",
         f"- Медианная экономия при смене победителя: {_money(int(median(savings)))}"
         if savings
         else "- Медианная экономия при смене победителя: нет данных",
@@ -413,6 +479,13 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
             f"- Концентрация лидера: **{_product_name(product)}** выигрывает "
             f"{most_common_winner[1]} / {len(complete)} сценариев "
             f"({_percent(most_common_winner[1], len(complete))})"
+        )
+    if most_common_purchase_winner:
+        product = catalog.product(most_common_purchase_winner[0])
+        lines.append(
+            f"- Концентрация baseline по цене покупки: **{_product_name(product)}** — "
+            f"{most_common_purchase_winner[1]} / {len(complete)} сценариев "
+            f"({_percent(most_common_purchase_winner[1], len(complete))})"
         )
     if most_common_winner_brand:
         lines.append(
@@ -442,12 +515,12 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
             "",
         ]
     )
-    if execution_viable and early_value_signal:
+    if phase0_status == "GO":
         lines.extend(
             [
-                "- Рекомендация процесса: **`CONTINUE PHASE 0`** — ранний сигнал ценности есть, но это не итоговый `GO`.",
+                "- Рекомендация процесса: **`GO`** — минимальные критерии Proof of Value выполнены.",
                 f"- Основание: все {len(scenarios)} сценариев конкурентны, Decision Engine меняет выбор в {len(competitive_changed)} из них, а контроль чувствительности даёт {len(sensitivity_winner_ids)} разных победителя.",
-                "- Что блокирует итоговый вывод: набор меньше целевых 30–50 моделей, цены остаются ручными test observations, а региональные конфликты и непубликованные параметры ещё требуют проверки.",
+                "- Перед production-разработкой всё равно требуется обновить и расширить ценовые наблюдения: Phase 0 доказывает полезность расчёта, а не готовность price feed.",
             ]
         )
         if most_common_winner_brand and most_common_winner_brand[1] * 3 >= len(complete) * 2:
@@ -459,11 +532,27 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
             lines.append(
                 f"- Стресс-тест цен пока разреженный: повторные наблюдения есть только для {repeated_price_entities} из {len(price_entity_counts)} ценовых сущностей, поэтому его результат нельзя считать доказанной рыночной устойчивостью."
             )
+    elif phase0_status == "REASSESS":
+        lines.extend(
+            [
+                "- Рекомендация процесса: **`REASSESS BEFORE PRODUCT BUILD`** — экономическая ценность видна, но текущая проверка чувствительности не подтверждает достаточно сценарно-зависимый выбор.",
+                f"- Основание: Decision Engine меняет выбор в {len(competitive_changed)} из {len(competitive)} конкурентных сценариев; число разных победителей в {len(sensitivity)} контрольных точках объёма — {len(sensitivity_winner_ids)}.",
+                f"- Ограничение сигнала: полный расчёт меняет результат упрощённого TCO только в {len(simplified_changed)} из {len(complete)} сценариев; 100% смен относительно цены покупки нельзя считать достаточным доказательством специализированного преимущества.",
+                "- Следующий тест должен проверять устойчивость прямых конкурентов по повторным ценам, доле цветной печати и горизонту владения, а не просто увеличивать число похожих моделей.",
+            ]
+        )
+    elif phase0_status == "NO-GO":
+        lines.extend(
+            [
+                "- Рекомендация процесса: **`NO-GO`** — на текущей полной выборке Decision Engine не меняет наивный выбор по цене покупки.",
+                "- До новой продуктовой разработки требуется пересмотр гипотезы или категории.",
+            ]
+        )
     else:
         lines.extend(
             [
-                "- Рекомендация процесса: **`REASSESS BEFORE EXPANSION`** — текущая выборка пока не показывает одновременно конкурентные сценарии, смену рекомендаций и чувствительность ranking.",
-                "- Это промежуточная проверка процесса, а не итоговый `NO-GO`.",
+                "- Рекомендация процесса: **`CONTINUE PHASE 0`** — выборка или сценарное покрытие ещё не достигли минимального gate.",
+                "- Это промежуточная проверка процесса, а не итоговый вывод.",
             ]
         )
 

@@ -588,5 +588,149 @@
     "source_id": "evidence-price-brother-t720-device-price-ru",
     "observed_at": "2026-08-16",
     "is_primary": false
+  },
+  {
+    "id": "price-canon-g1411-device",
+    "entity_type": "product",
+    "entity_id": "canon-pixma-g1411",
+    "price_rub": 9120,
+    "source_id": "evidence-price-canon-g1411-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-canon-g2411-device",
+    "entity_type": "product",
+    "entity_id": "canon-pixma-g2411",
+    "price_rub": 17422,
+    "source_id": "evidence-price-canon-g2411-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-brother-t420-device",
+    "entity_type": "product",
+    "entity_id": "brother-dcp-t420w",
+    "price_rub": 24990,
+    "source_id": "evidence-price-brother-t420-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-brother-t920-device",
+    "entity_type": "product",
+    "entity_id": "brother-mfc-t920dw",
+    "price_rub": 48950,
+    "source_id": "evidence-price-brother-t920-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-hp-smart-tank-580-device",
+    "entity_type": "product",
+    "entity_id": "hp-smart-tank-580",
+    "price_rub": 13820,
+    "source_id": "evidence-price-hp-smart-tank-580-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-hp-smart-tank-720-device",
+    "entity_type": "product",
+    "entity_id": "hp-smart-tank-720",
+    "price_rub": 31430,
+    "source_id": "evidence-price-hp-smart-tank-720-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-canon-lbp6030b-device",
+    "entity_type": "product",
+    "entity_id": "canon-isensys-lbp6030b",
+    "price_rub": 14410,
+    "source_id": "evidence-price-canon-lbp6030b-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-xerox-b230-device",
+    "entity_type": "product",
+    "entity_id": "xerox-b230",
+    "price_rub": 14661,
+    "source_id": "evidence-price-xerox-b230-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-canon-ts3640-device",
+    "entity_type": "product",
+    "entity_id": "canon-pixma-ts3640",
+    "price_rub": 7190,
+    "source_id": "evidence-price-canon-ts3640-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-canon-ts7440a-device",
+    "entity_type": "product",
+    "entity_id": "canon-pixma-ts7440a",
+    "price_rub": 8000,
+    "source_id": "evidence-price-canon-ts7440a-device",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-hp-gt53xl-black",
+    "entity_type": "consumable",
+    "entity_id": "hp-gt53xl-black",
+    "price_rub": 1207,
+    "source_id": "evidence-price-hp-gt53xl-black",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-hp-gt52-cyan",
+    "entity_type": "consumable",
+    "entity_id": "hp-gt52-cyan",
+    "price_rub": 1071,
+    "source_id": "evidence-price-hp-gt52-cyan",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-hp-gt52-magenta",
+    "entity_type": "consumable",
+    "entity_id": "hp-gt52-magenta",
+    "price_rub": 1071,
+    "source_id": "evidence-price-hp-gt52-magenta",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-hp-gt52-yellow",
+    "entity_type": "consumable",
+    "entity_id": "hp-gt52-yellow",
+    "price_rub": 1113,
+    "source_id": "evidence-price-hp-gt52-yellow",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-canon-pg-445",
+    "entity_type": "consumable",
+    "entity_id": "canon-pg-445",
+    "price_rub": 1990,
+    "source_id": "evidence-price-canon-pg-445",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-canon-cl-446",
+    "entity_type": "consumable",
+    "entity_id": "canon-cl-446",
+    "price_rub": 1920,
+    "source_id": "evidence-price-canon-cl-446",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-canon-pg-460",
+    "entity_type": "consumable",
+    "entity_id": "canon-pg-460",
+    "price_rub": 4025,
+    "source_id": "evidence-price-canon-pg-460",
+    "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-canon-cl-461",
+    "entity_type": "consumable",
+    "entity_id": "canon-cl-461",
+    "price_rub": 1100,
+    "source_id": "evidence-price-canon-cl-461",
+    "observed_at": "2026-08-17"
   }
 ]
