@@ -73,7 +73,7 @@ def evaluate_scenario(catalog: Catalog, scenario: UsageScenario) -> ScenarioResu
 
 
 def _money(value: int) -> str:
-    return f"{value:,} RUB".replace(",", " ")
+    return f"{value:,} ₽".replace(",", " ")
 
 
 def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
@@ -92,35 +92,45 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
     )
 
     lines = [
-        "# Phase 0 evaluation report",
+        "# Отчёт об оценке Фазы 0",
         "",
-        "> Generated deterministically from `data/golden`. Do not edit by hand.",
+        "> Отчёт детерминированно сформирован из `data/golden`. Не редактировать вручную.",
         "",
-        "## Readiness",
+        "## Готовность",
         "",
-        f"- Golden Dataset products: {len(catalog.products)} / 30–50 target",
-        f"- Scenarios defined: {len(scenarios)} / 10–15 target",
-        f"- Scenarios evaluated with a winner: {len(complete)} / {len(scenarios)}",
-        "- Phase 0 verdict: `INCOMPLETE`" if len(catalog.products) < 30 else "- Phase 0 verdict: pending GO/REASSESS/NO-GO review",
+        f"- Моделей в Golden Dataset: {len(catalog.products)} / целевые 30–50",
+        f"- Задано сценариев: {len(scenarios)} / целевые 10–15",
+        f"- Сценариев с рассчитанным победителем: {len(complete)} / {len(scenarios)}",
+        "- Статус Фазы 0: `INCOMPLETE` — данных пока недостаточно для итогового решения"
+        if len(catalog.products) < 30
+        else "- Статус Фазы 0: требуется итоговая оценка `GO` / `REASSESS` / `NO-GO`",
         "",
-        "## Aggregate metrics",
+        "## Сводные метрики",
         "",
-        f"- Winner changed vs purchase price: {len(changed)} / {len(complete)}",
-        f"- Recommendation Change Rate: {len(changed) * 100 // len(complete)}%" if complete else "- Recommendation Change Rate: N/A",
-        f"- Median savings when changed: {_money(int(median(savings)))}" if savings else "- Median savings when changed: N/A",
-        f"- Maximum savings: {_money(max(savings))}" if savings else "- Maximum savings: N/A",
+        f"- Победитель изменился относительно выбора по цене покупки: {len(changed)} / {len(complete)}",
+        f"- Доля изменившихся рекомендаций: {len(changed) * 100 // len(complete)}%"
+        if complete
+        else "- Доля изменившихся рекомендаций: нет данных",
+        f"- Медианная экономия при смене победителя: {_money(int(median(savings)))}"
+        if savings
+        else "- Медианная экономия при смене победителя: нет данных",
+        f"- Максимальная экономия: {_money(max(savings))}"
+        if savings
+        else "- Максимальная экономия: нет данных",
         "",
-        "## Scenario results",
+        "## Результаты по сценариям",
         "",
     ]
 
     for result in results:
         lines.extend([f"### {result.scenario.name}", ""])
         if result.decision_engine_winner is None:
-            lines.append("No verified, complete candidate produced a recommendation.")
+            lines.append(
+                "Нет подходящей модели с полными и подтверждёнными данными для рекомендации."
+            )
             if result.data_exclusions:
                 lines.extend(
-                    ["", "Data exclusions:"]
+                    ["", "Исключения из-за качества данных:"]
                     + [f"- `{product_id}`: {reason}" for product_id, reason in result.data_exclusions]
                 )
             lines.append("")
@@ -136,33 +146,34 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         )
         lines.extend(
             [
-                f"- Purchase-price winner: **{result.purchase_price_winner.manufacturer} {result.purchase_price_winner.model}** — purchase {_money(result.purchase_price_winner_tco.purchase_cost_rub)}, full TCO {_money(result.purchase_price_winner_tco.total_cost_rub)}",
-                f"- Simplified-TCO winner: **{result.simplified_tco_winner.manufacturer} {result.simplified_tco_winner.model}**",
-                f"- Decision Engine winner: **{result.decision_engine_winner.manufacturer} {result.decision_engine_winner.model}** — purchase {_money(result.decision_engine_winner_tco.purchase_cost_rub)}, consumables {_money(result.decision_engine_winner_tco.consumables_cost_rub)}, maintenance {_money(result.decision_engine_winner_tco.maintenance_cost_rub)}, total {_money(result.decision_engine_winner_tco.total_cost_rub)}",
-                f"- Savings vs purchase-price baseline: **{_money(savings_value)}**",
-                "- Evidence coverage for recommendation: **100% of required calculation facts**",
+                f"- Победитель по цене покупки: **{result.purchase_price_winner.manufacturer} {result.purchase_price_winner.model}** — покупка {_money(result.purchase_price_winner_tco.purchase_cost_rub)}, полный TCO {_money(result.purchase_price_winner_tco.total_cost_rub)}",
+                f"- Победитель по упрощённому TCO: **{result.simplified_tco_winner.manufacturer} {result.simplified_tco_winner.model}**",
+                f"- Победитель Decision Engine: **{result.decision_engine_winner.manufacturer} {result.decision_engine_winner.model}** — покупка {_money(result.decision_engine_winner_tco.purchase_cost_rub)}, расходники {_money(result.decision_engine_winner_tco.consumables_cost_rub)}, обслуживание {_money(result.decision_engine_winner_tco.maintenance_cost_rub)}, итого {_money(result.decision_engine_winner_tco.total_cost_rub)}",
+                f"- Экономия относительно выбора по цене покупки: **{_money(savings_value)}**",
+                "- Покрытие источниками: **100% обязательных для расчёта фактов**",
             ]
         )
         if result.decision_engine_warnings:
             lines.extend(
-                f"- Warning: {warning}" for warning in result.decision_engine_warnings
+                f"- Предупреждение: {warning}"
+                for warning in result.decision_engine_warnings
             )
-        lines.extend(["", "Purchased units for the recommendation:", ""])
+        lines.extend(["", "Покупки расходников и компонентов для рекомендации:", ""])
         lines.extend(
-            f"- `{component.channel}` / `{component.consumable_id}`: {component.units_purchased} × {_money(component.unit_price_rub)} (demand {component.demand_pages}, starter/installed capacity {component.starter_capacity_pages}, package yield {component.unit_capacity_pages})"
+            f"- `{component.channel}` / `{component.consumable_id}`: {component.units_purchased} × {_money(component.unit_price_rub)} (потребность {component.demand_pages} стр., стартовый/установленный ресурс {component.starter_capacity_pages} стр., ресурс упаковки {component.unit_capacity_pages} стр.)"
             for component in result.decision_engine_winner_tco.components
         )
         lines.append("")
 
-    lines.extend(["## Data completeness", ""])
+    lines.extend(["## Полнота данных", ""])
     if not catalog.products:
-        lines.append("Golden Dataset has no products yet.")
+        lines.append("В Golden Dataset пока нет моделей.")
     for product in catalog.products:
         audit = audit_product(catalog, product)
         lines.append(
-            f"- `{product.id}`: {audit.verified_facts}/{audit.required_facts} verified facts ({audit.coverage_percent}%)"
+            f"- `{product.id}`: {audit.verified_facts}/{audit.required_facts} подтверждённых фактов ({audit.coverage_percent}%)"
         )
-        lines.extend(f"  - Missing: `{item}`" for item in audit.missing)
+        lines.extend(f"  - Не хватает: `{item}`" for item in audit.missing)
     lines.append("")
     return "\n".join(lines)
 

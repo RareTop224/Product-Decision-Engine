@@ -1,14 +1,14 @@
 [
   {
     "id": "rare-home-mono",
-    "name": "Very rare home mono printing",
+    "name": "Очень редкая домашняя чёрно-белая печать",
     "mono_pages_per_month": 20,
     "color_pages_per_month": 0,
     "ownership_months": 60
   },
   {
     "id": "home-light-color",
-    "name": "Home documents with occasional color",
+    "name": "Домашние документы с редкой цветной печатью",
     "mono_pages_per_month": 40,
     "color_pages_per_month": 10,
     "ownership_months": 60,
@@ -16,7 +16,7 @@
   },
   {
     "id": "student-documents",
-    "name": "Student documents",
+    "name": "Документы для студента",
     "mono_pages_per_month": 150,
     "color_pages_per_month": 20,
     "ownership_months": 60,
@@ -24,7 +24,7 @@
   },
   {
     "id": "teacher-mixed",
-    "name": "Teacher high-volume mixed printing",
+    "name": "Большой объём смешанной печати для учителя",
     "mono_pages_per_month": 500,
     "color_pages_per_month": 100,
     "ownership_months": 60,
@@ -32,7 +32,7 @@
   },
   {
     "id": "small-office-mono",
-    "name": "Small office high-volume mono",
+    "name": "Большой объём чёрно-белой печати для малого офиса",
     "mono_pages_per_month": 1500,
     "color_pages_per_month": 0,
     "ownership_months": 60,
@@ -40,7 +40,7 @@
   },
   {
     "id": "home-mfp-wifi",
-    "name": "Home MFP with mandatory Wi-Fi",
+    "name": "Домашнее МФУ с обязательным Wi-Fi",
     "mono_pages_per_month": 80,
     "color_pages_per_month": 20,
     "ownership_months": 36,
@@ -49,7 +49,7 @@
   },
   {
     "id": "duplex-documents",
-    "name": "Document printing with mandatory duplex",
+    "name": "Печать документов с обязательным автодуплексом",
     "mono_pages_per_month": 300,
     "color_pages_per_month": 0,
     "ownership_months": 60,
@@ -57,7 +57,7 @@
   },
   {
     "id": "low-budget-long-horizon",
-    "name": "Low purchase budget and long ownership",
+    "name": "Низкий бюджет покупки и долгий срок владения",
     "mono_pages_per_month": 200,
     "color_pages_per_month": 20,
     "ownership_months": 60,
@@ -65,7 +65,7 @@
   },
   {
     "id": "tco-priority",
-    "name": "Flexible purchase budget with TCO priority",
+    "name": "Гибкий бюджет с приоритетом минимального TCO",
     "mono_pages_per_month": 600,
     "color_pages_per_month": 150,
     "ownership_months": 60,
@@ -73,7 +73,7 @@
   },
   {
     "id": "weak-model-exclusion",
-    "name": "Workload intended to exclude weak models",
+    "name": "Нагрузка, исключающая слишком слабые модели",
     "mono_pages_per_month": 2500,
     "color_pages_per_month": 0,
     "ownership_months": 36,
@@ -82,7 +82,7 @@
   },
   {
     "id": "micro-office-color",
-    "name": "Micro office color MFP",
+    "name": "Цветное МФУ для микроофиса",
     "mono_pages_per_month": 400,
     "color_pages_per_month": 100,
     "ownership_months": 48,
@@ -92,7 +92,7 @@
   },
   {
     "id": "family-schoolwork",
-    "name": "Family schoolwork and forms",
+    "name": "Семейная печать учебных материалов и документов",
     "mono_pages_per_month": 100,
     "color_pages_per_month": 50,
     "ownership_months": 48,
@@ -101,14 +101,14 @@
   },
   {
     "id": "mono-short-horizon",
-    "name": "Moderate mono printing for one year",
+    "name": "Умеренная чёрно-белая печать в течение года",
     "mono_pages_per_month": 300,
     "color_pages_per_month": 0,
     "ownership_months": 12
   },
   {
     "id": "color-short-horizon",
-    "name": "Moderate color printing for one year",
+    "name": "Умеренная цветная печать в течение года",
     "mono_pages_per_month": 100,
     "color_pages_per_month": 100,
     "ownership_months": 12,
@@ -116,7 +116,7 @@
   },
   {
     "id": "mono-tco-crossover",
-    "name": "High-volume mono with no capability constraints",
+    "name": "Большой объём чёрно-белой печати без требований к функциям",
     "mono_pages_per_month": 1000,
     "color_pages_per_month": 0,
     "ownership_months": 12

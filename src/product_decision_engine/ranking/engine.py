@@ -36,33 +36,33 @@ def evaluate_eligibility(
     warnings: list[str] = []
 
     if scenario.color_pages_per_month > 0 and product.color_mode != ColorMode.COLOR:
-        reasons.append("color printing required")
+        reasons.append("требуется цветная печать")
     if scenario.require_mfp and product.product_type != ProductType.MFP:
-        reasons.append("MFP required")
+        reasons.append("требуется МФУ")
     if scenario.require_wifi and not product.wifi:
-        reasons.append("Wi-Fi required")
+        reasons.append("требуется Wi-Fi")
     if scenario.require_auto_duplex and not product.auto_duplex:
-        reasons.append("automatic duplex required")
+        reasons.append("требуется автоматическая двусторонняя печать")
     if (
         product.recommended_monthly_volume is not None
         and scenario.monthly_pages > product.recommended_monthly_volume
     ):
-        reasons.append("monthly usage exceeds published recommended volume")
+        reasons.append("месячный объём превышает опубликованную рекомендуемую нагрузку")
     if product.recommended_monthly_volume is None:
-        warnings.append("recommended monthly volume is not published in dataset")
+        warnings.append("рекомендуемый месячный объём не опубликован в датасете")
     if product.maintenance_data_status == MaintenanceDataStatus.NOT_PUBLISHED:
-        warnings.append("maintenance schedule is not published in dataset")
+        warnings.append("регламент обслуживания не опубликован в датасете")
 
     try:
         purchase_price = catalog.latest_price("product", product.id).price_rub
     except MissingCriticalData:
-        reasons.append("purchase price is missing")
+        reasons.append("отсутствует цена устройства")
     else:
         if (
             scenario.max_purchase_price_rub is not None
             and purchase_price > scenario.max_purchase_price_rub
         ):
-            reasons.append("purchase price exceeds budget")
+            reasons.append("цена устройства превышает бюджет")
 
     return Eligibility(eligible=not reasons, reasons=tuple(reasons), warnings=tuple(warnings))
 

@@ -32,9 +32,10 @@ class DataAndReportTests(unittest.TestCase):
 
         report = build_report(catalog, scenarios)
 
-        self.assertIn("Phase 0 verdict: `INCOMPLETE`", report)
-        self.assertNotIn("Phase 0 verdict: `GO`", report)
-        self.assertIn("recommended monthly volume is not published in dataset", report)
+        self.assertIn("Статус Фазы 0: `INCOMPLETE`", report)
+        self.assertNotIn("Статус Фазы 0: `GO`", report)
+        self.assertIn("рекомендуемый месячный объём не опубликован в датасете", report)
+        self.assertNotIn("Phase 0 evaluation report", report)
 
 
 if __name__ == "__main__":
