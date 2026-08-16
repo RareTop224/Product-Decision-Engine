@@ -10,6 +10,7 @@ from product_decision_engine.domain.models import (
     Consumable,
     ConsumableKind,
     Evidence,
+    MaintenanceDataStatus,
     PageScope,
     PriceObservation,
     Product,
@@ -43,6 +44,9 @@ def load_catalog(directory: Path) -> Catalog:
                 **item,
                 "product_type": ProductType(item["product_type"]),
                 "color_mode": ColorMode(item["color_mode"]),
+                "maintenance_data_status": MaintenanceDataStatus(
+                    item["maintenance_data_status"]
+                ),
                 "expected_consumable_channels": tuple(item["expected_consumable_channels"]),
             }
         )
@@ -112,4 +116,3 @@ def load_scenarios(path: Path) -> tuple[UsageScenario, ...]:
     scenarios = tuple(UsageScenario(**item) for item in _read_array(path))
     _ensure_unique_ids(scenarios, "scenario")
     return scenarios
-

@@ -1,1 +1,208 @@
-[]
+[
+  {
+    "id": "link-hp-m111w-starter-black",
+    "product_id": "hp-laserjet-m111w",
+    "consumable_id": "hp-m111w-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-hp-m111w-replacement-black",
+    "product_id": "hp-laserjet-m111w",
+    "consumable_id": "hp-w1500a",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "notes": "Canonical OEM replacement for the pilot dataset."
+  },
+  {
+    "id": "link-pantum-p2500w-starter-black",
+    "product_id": "pantum-p2500w",
+    "consumable_id": "pantum-pc211p",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-pantum-p2500w-replacement-black",
+    "product_id": "pantum-p2500w",
+    "consumable_id": "pantum-pc211p",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-lbp122dw-starter-black",
+    "product_id": "canon-isensys-lbp122dw",
+    "consumable_id": "canon-lbp122dw-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-lbp122dw-replacement-black",
+    "product_id": "canon-isensys-lbp122dw",
+    "consumable_id": "canon-071h",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "notes": "071H selected as the canonical high-yield OEM replacement."
+  },
+  {
+    "id": "link-epson-l3250-starter-black",
+    "product_id": "epson-ecotank-l3250",
+    "consumable_id": "epson-l3250-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-epson-l3250-replacement-black",
+    "product_id": "epson-ecotank-l3250",
+    "consumable_id": "epson-103-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "notes": "Black-bottle yield is charged against all printed pages; CMY composite yields are charged against color pages."
+  },
+  {
+    "id": "link-epson-l3250-starter-cyan",
+    "product_id": "epson-ecotank-l3250",
+    "consumable_id": "epson-l3250-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-epson-l3250-replacement-cyan",
+    "product_id": "epson-ecotank-l3250",
+    "consumable_id": "epson-103-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages",
+    "notes": "Each color bottle is required for the published composite-color yield."
+  },
+  {
+    "id": "link-epson-l3250-starter-magenta",
+    "product_id": "epson-ecotank-l3250",
+    "consumable_id": "epson-l3250-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-epson-l3250-replacement-magenta",
+    "product_id": "epson-ecotank-l3250",
+    "consumable_id": "epson-103-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages",
+    "notes": "Each color bottle is required for the published composite-color yield."
+  },
+  {
+    "id": "link-epson-l3250-starter-yellow",
+    "product_id": "epson-ecotank-l3250",
+    "consumable_id": "epson-l3250-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-epson-l3250-replacement-yellow",
+    "product_id": "epson-ecotank-l3250",
+    "consumable_id": "epson-103-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages",
+    "notes": "Each color bottle is required for the published composite-color yield."
+  },
+  {
+    "id": "link-hp-150nw-starter-black",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-150nw-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-hp-150nw-replacement-black",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-117a-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "notes": "Black toner is charged against all printed pages."
+  },
+  {
+    "id": "link-hp-150nw-starter-cyan",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-150nw-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-150nw-replacement-cyan",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-117a-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages",
+    "notes": "Each CMY cartridge is charged against color pages."
+  },
+  {
+    "id": "link-hp-150nw-starter-magenta",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-150nw-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-150nw-replacement-magenta",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-117a-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages",
+    "notes": "Each CMY cartridge is charged against color pages."
+  },
+  {
+    "id": "link-hp-150nw-starter-yellow",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-150nw-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-hp-150nw-replacement-yellow",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-117a-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages",
+    "notes": "Each CMY cartridge is charged against color pages."
+  },
+  {
+    "id": "link-hp-150nw-maintenance-drum",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-120a-drum",
+    "role": "maintenance",
+    "channel": "imaging_drum",
+    "page_scope": "all_pages",
+    "mono_page_weight": 1,
+    "color_page_weight": 4,
+    "notes": "HP publishes 16,000 mono or 4,000 color pages; one color page consumes four equivalent units."
+  },
+  {
+    "id": "link-hp-150nw-maintenance-toner-collection",
+    "product_id": "hp-color-laser-150nw",
+    "consumable_id": "hp-5kz38a-toner-collection",
+    "role": "maintenance",
+    "channel": "toner_collection_unit",
+    "page_scope": "all_pages",
+    "notes": "One unit is supplied with the printer; replacement yield is 7,000 pages."
+  }
+]

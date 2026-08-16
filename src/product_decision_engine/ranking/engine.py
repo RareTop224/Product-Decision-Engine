@@ -3,7 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from product_decision_engine.domain.catalog import Catalog, MissingCriticalData
-from product_decision_engine.domain.models import ColorMode, Product, ProductType, UsageScenario
+from product_decision_engine.domain.models import (
+    ColorMode,
+    MaintenanceDataStatus,
+    Product,
+    ProductType,
+    UsageScenario,
+)
 from product_decision_engine.tco.calculator import TcoBreakdown, calculate_tco
 
 
@@ -44,6 +50,8 @@ def evaluate_eligibility(
         reasons.append("monthly usage exceeds published recommended volume")
     if product.recommended_monthly_volume is None:
         warnings.append("recommended monthly volume is not published in dataset")
+    if product.maintenance_data_status == MaintenanceDataStatus.NOT_PUBLISHED:
+        warnings.append("maintenance schedule is not published in dataset")
 
     try:
         purchase_price = catalog.latest_price("product", product.id).price_rub
@@ -90,4 +98,3 @@ def rank_products(
         RankedProduct(rank=index, product=product, tco=tco)
         for index, (product, tco) in enumerate(calculated, start=1)
     )
-

@@ -26,6 +26,7 @@ def audit_product(catalog: Catalog, product: Product) -> EvidenceAudit:
         ("product", product.id, "color_mode"),
         ("product", product.id, "wifi"),
         ("product", product.id, "auto_duplex"),
+        ("product", product.id, "maintenance_data_status"),
     ]
     if product.recommended_monthly_volume is not None:
         requirements.append(("product", product.id, "recommended_monthly_volume"))
@@ -62,4 +63,3 @@ def audit_product(catalog: Catalog, product: Product) -> EvidenceAudit:
         verified_facts=len(unique_requirements) - len(missing),
         missing=missing,
     )
-

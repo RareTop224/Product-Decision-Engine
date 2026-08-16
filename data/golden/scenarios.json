@@ -115,10 +115,10 @@
     "require_wifi": true
   },
   {
-    "id": "zero-pages-control",
-    "name": "Zero-pages calculation control",
-    "mono_pages_per_month": 0,
+    "id": "mono-tco-crossover",
+    "name": "High-volume mono with no capability constraints",
+    "mono_pages_per_month": 1000,
     "color_pages_per_month": 0,
-    "ownership_months": 60
+    "ownership_months": 12
   }
 ]

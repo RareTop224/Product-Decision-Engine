@@ -17,14 +17,16 @@ def _ceil_div(numerator: int, denominator: int) -> int:
     return (numerator + denominator - 1) // denominator
 
 
-def _demand_for_scope(scope: PageScope, scenario: UsageScenario) -> int:
-    if scope == PageScope.MONO_PAGES:
-        return scenario.mono_pages_total
-    if scope == PageScope.COLOR_PAGES:
-        return scenario.color_pages_total
-    if scope == PageScope.ALL_PAGES:
-        return scenario.all_pages_total
-    raise ValueError(f"Unsupported page scope: {scope}")
+def _demand_for_link(link: ProductConsumable, scenario: UsageScenario) -> int:
+    mono_demand = scenario.mono_pages_total * link.mono_page_weight
+    color_demand = scenario.color_pages_total * link.color_page_weight
+    if link.page_scope == PageScope.MONO_PAGES:
+        return mono_demand
+    if link.page_scope == PageScope.COLOR_PAGES:
+        return color_demand
+    if link.page_scope == PageScope.ALL_PAGES:
+        return mono_demand + color_demand
+    raise ValueError(f"Unsupported page scope: {link.page_scope}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -57,7 +59,13 @@ def _validate_evidence(
     product_id: str,
     links: tuple[ProductConsumable, ...],
 ) -> None:
-    for field_name in ("product_type", "color_mode", "wifi", "auto_duplex"):
+    for field_name in (
+        "product_type",
+        "color_mode",
+        "wifi",
+        "auto_duplex",
+        "maintenance_data_status",
+    ):
         catalog.require_verified_evidence("product", product_id, field_name)
 
     product = catalog.product(product_id)
@@ -103,7 +111,7 @@ def calculate_tco(
 
     for replacement in replacement_links:
         consumable = catalog.consumable(replacement.consumable_id)
-        demand = _demand_for_scope(replacement.page_scope, scenario)
+        demand = _demand_for_link(replacement, scenario)
         starters = [link for link in starter_links if link.channel == replacement.channel]
         starter_capacity = sum(
             catalog.consumable(link.consumable_id).yield_value * link.quantity_in_box
@@ -129,7 +137,7 @@ def calculate_tco(
 
     for maintenance in maintenance_links:
         consumable = catalog.consumable(maintenance.consumable_id)
-        demand = _demand_for_scope(maintenance.page_scope, scenario)
+        demand = _demand_for_link(maintenance, scenario)
         installed_capacity = consumable.yield_value
         package_capacity = consumable.yield_value * maintenance.quantity_in_box
         units = _ceil_div(demand - installed_capacity, package_capacity)
@@ -191,7 +199,7 @@ def calculate_simplified_tco(
     components: list[ComponentCost] = []
     for replacement in replacement_links:
         consumable = catalog.consumable(replacement.consumable_id)
-        demand = _demand_for_scope(replacement.page_scope, scenario)
+        demand = _demand_for_link(replacement, scenario)
         capacity = consumable.yield_value * replacement.quantity_in_box
         units = _ceil_div(demand, capacity)
         unit_price = catalog.latest_price("consumable", consumable.id).price_rub

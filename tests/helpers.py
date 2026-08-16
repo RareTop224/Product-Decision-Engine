@@ -8,6 +8,7 @@ from product_decision_engine.domain.models import (
     Consumable,
     ConsumableKind,
     Evidence,
+    MaintenanceDataStatus,
     PageScope,
     PriceObservation,
     Product,
@@ -44,6 +45,7 @@ def make_mono_catalog(
         auto_duplex=auto_duplex,
         recommended_monthly_volume=recommended_monthly_volume,
         expected_consumable_channels=("black",),
+        maintenance_data_status=MaintenanceDataStatus.COMPLETE,
     )
     starter = Consumable(
         id=f"{prefix}-starter",
@@ -159,7 +161,13 @@ def make_mono_catalog(
             )
         )
 
-    for field_name in ("product_type", "color_mode", "wifi", "auto_duplex"):
+    for field_name in (
+        "product_type",
+        "color_mode",
+        "wifi",
+        "auto_duplex",
+        "maintenance_data_status",
+    ):
         add_evidence(f"{prefix}-product-{field_name}", "product", prefix, field_name)
     if recommended_monthly_volume is not None:
         add_evidence(
@@ -209,4 +217,3 @@ def merge_catalogs(*catalogs: Catalog) -> Catalog:
         prices=tuple(item for catalog in catalogs for item in catalog.prices),
         evidence=tuple(item for catalog in catalogs for item in catalog.evidence),
     )
-

@@ -1,1 +1,254 @@
-[]
+[
+  {
+    "id": "hp-m111w-inbox-black",
+    "manufacturer": "HP",
+    "part_number": "INBOX-7MD68A",
+    "kind": "toner",
+    "color": "black",
+    "yield_value": 500,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19752",
+    "is_oem": true
+  },
+  {
+    "id": "hp-w1500a",
+    "manufacturer": "HP",
+    "part_number": "W1500A",
+    "kind": "toner",
+    "color": "black",
+    "yield_value": 975,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19752",
+    "is_oem": true
+  },
+  {
+    "id": "pantum-pc211p",
+    "manufacturer": "Pantum",
+    "part_number": "PC-211P",
+    "kind": "toner",
+    "color": "black",
+    "yield_value": 1600,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19752",
+    "is_oem": true
+  },
+  {
+    "id": "canon-lbp122dw-inbox-black",
+    "manufacturer": "Canon",
+    "part_number": "INBOX-071",
+    "kind": "toner",
+    "color": "black",
+    "yield_value": 700,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19752",
+    "is_oem": true
+  },
+  {
+    "id": "canon-071h",
+    "manufacturer": "Canon",
+    "part_number": "5646C002",
+    "kind": "toner",
+    "color": "black",
+    "yield_value": 2500,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19752",
+    "is_oem": true
+  },
+  {
+    "id": "epson-l3250-inbox-black",
+    "manufacturer": "Epson",
+    "part_number": "INBOX-103-BLACK",
+    "kind": "ink_bottle",
+    "color": "black",
+    "yield_value": 8100,
+    "yield_unit": "pages",
+    "yield_standard": "Epson methodology extrapolated from ISO/IEC 24712 test patterns",
+    "is_oem": true
+  },
+  {
+    "id": "epson-103-black",
+    "manufacturer": "Epson",
+    "part_number": "C13T00S14A",
+    "kind": "ink_bottle",
+    "color": "black",
+    "yield_value": 4500,
+    "yield_unit": "pages",
+    "yield_standard": "Epson methodology extrapolated from ISO/IEC 24712 test patterns",
+    "is_oem": true
+  },
+  {
+    "id": "epson-l3250-inbox-cyan",
+    "manufacturer": "Epson",
+    "part_number": "INBOX-103-CYAN",
+    "kind": "ink_bottle",
+    "color": "cyan",
+    "yield_value": 6500,
+    "yield_unit": "pages",
+    "yield_standard": "Epson methodology extrapolated from ISO/IEC 24712 test patterns",
+    "is_oem": true
+  },
+  {
+    "id": "epson-103-cyan",
+    "manufacturer": "Epson",
+    "part_number": "C13T00S24A",
+    "kind": "ink_bottle",
+    "color": "cyan",
+    "yield_value": 7500,
+    "yield_unit": "pages",
+    "yield_standard": "Epson methodology extrapolated from ISO/IEC 24712 test patterns",
+    "is_oem": true
+  },
+  {
+    "id": "epson-l3250-inbox-magenta",
+    "manufacturer": "Epson",
+    "part_number": "INBOX-103-MAGENTA",
+    "kind": "ink_bottle",
+    "color": "magenta",
+    "yield_value": 6500,
+    "yield_unit": "pages",
+    "yield_standard": "Epson methodology extrapolated from ISO/IEC 24712 test patterns",
+    "is_oem": true
+  },
+  {
+    "id": "epson-103-magenta",
+    "manufacturer": "Epson",
+    "part_number": "C13T00S34A",
+    "kind": "ink_bottle",
+    "color": "magenta",
+    "yield_value": 7500,
+    "yield_unit": "pages",
+    "yield_standard": "Epson methodology extrapolated from ISO/IEC 24712 test patterns",
+    "is_oem": true
+  },
+  {
+    "id": "epson-l3250-inbox-yellow",
+    "manufacturer": "Epson",
+    "part_number": "INBOX-103-YELLOW",
+    "kind": "ink_bottle",
+    "color": "yellow",
+    "yield_value": 6500,
+    "yield_unit": "pages",
+    "yield_standard": "Epson methodology extrapolated from ISO/IEC 24712 test patterns",
+    "is_oem": true
+  },
+  {
+    "id": "epson-103-yellow",
+    "manufacturer": "Epson",
+    "part_number": "C13T00S44A",
+    "kind": "ink_bottle",
+    "color": "yellow",
+    "yield_value": 7500,
+    "yield_unit": "pages",
+    "yield_standard": "Epson methodology extrapolated from ISO/IEC 24712 test patterns",
+    "is_oem": true
+  },
+  {
+    "id": "hp-150nw-inbox-black",
+    "manufacturer": "HP",
+    "part_number": "INBOX-117A-BLACK",
+    "kind": "toner",
+    "color": "black",
+    "yield_value": 700,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-117a-black",
+    "manufacturer": "HP",
+    "part_number": "W2070A",
+    "kind": "toner",
+    "color": "black",
+    "yield_value": 1000,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-150nw-inbox-cyan",
+    "manufacturer": "HP",
+    "part_number": "INBOX-117A-CYAN",
+    "kind": "toner",
+    "color": "cyan",
+    "yield_value": 500,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-117a-cyan",
+    "manufacturer": "HP",
+    "part_number": "W2071A",
+    "kind": "toner",
+    "color": "cyan",
+    "yield_value": 700,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-150nw-inbox-magenta",
+    "manufacturer": "HP",
+    "part_number": "INBOX-117A-MAGENTA",
+    "kind": "toner",
+    "color": "magenta",
+    "yield_value": 500,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-117a-magenta",
+    "manufacturer": "HP",
+    "part_number": "W2073A",
+    "kind": "toner",
+    "color": "magenta",
+    "yield_value": 700,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-150nw-inbox-yellow",
+    "manufacturer": "HP",
+    "part_number": "INBOX-117A-YELLOW",
+    "kind": "toner",
+    "color": "yellow",
+    "yield_value": 500,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-117a-yellow",
+    "manufacturer": "HP",
+    "part_number": "W2072A",
+    "kind": "toner",
+    "color": "yellow",
+    "yield_value": 700,
+    "yield_unit": "pages",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-120a-drum",
+    "manufacturer": "HP",
+    "part_number": "W1120A",
+    "kind": "drum",
+    "color": "multi",
+    "yield_value": 16000,
+    "yield_unit": "mono_page_equivalents",
+    "yield_standard": "ISO/IEC 19798",
+    "is_oem": true
+  },
+  {
+    "id": "hp-5kz38a-toner-collection",
+    "manufacturer": "HP",
+    "part_number": "5KZ38A",
+    "kind": "other",
+    "color": "multi",
+    "yield_value": 7000,
+    "yield_unit": "pages",
+    "is_oem": true
+  }
+]

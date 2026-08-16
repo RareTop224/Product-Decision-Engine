@@ -5,6 +5,9 @@ import unittest
 from product_decision_engine.domain.catalog import Catalog, MissingCriticalData
 from product_decision_engine.domain.models import (
     ColorMode,
+    MaintenanceDataStatus,
+    PageScope,
+    ProductConsumable,
     UsageScenario,
 )
 from product_decision_engine.tco.calculator import calculate_simplified_tco, calculate_tco
@@ -83,6 +86,51 @@ class TcoCalculatorTests(unittest.TestCase):
         drum = next(item for item in result.components if item.channel == "drum")
         self.assertEqual(drum.units_purchased, 1)
 
+    def test_color_pages_can_consume_multiple_drum_equivalent_units(self) -> None:
+        base = make_mono_catalog(drum_yield=16_000, drum_price=2_000)
+        weighted_links = tuple(
+            ProductConsumable(
+                **{
+                    **{field: getattr(link, field) for field in link.__dataclass_fields__},
+                    "color_page_weight": 4,
+                }
+            )
+            if link.channel == "drum"
+            else link
+            for link in base.product_consumables
+        )
+        color_product = base.products[0].__class__(
+            **{
+                **{field: getattr(base.products[0], field) for field in base.products[0].__dataclass_fields__},
+                "color_mode": ColorMode.COLOR,
+            }
+        )
+        catalog = Catalog(
+            products=(color_product,),
+            consumables=base.consumables,
+            product_consumables=weighted_links,
+            prices=base.prices,
+            evidence=base.evidence,
+        )
+        color_usage = UsageScenario(
+            id="color-drum",
+            name="Color drum",
+            mono_pages_per_month=0,
+            color_pages_per_month=4_001,
+            ownership_months=1,
+        )
+
+        result = calculate_tco(
+            catalog,
+            "p1",
+            color_usage,
+            require_verified_evidence=False,
+        )
+
+        self.assertEqual(result.maintenance_cost_rub, 2_000)
+        drum = next(item for item in result.components if item.channel == "drum")
+        self.assertEqual(drum.demand_pages, 16_004)
+
     def test_missing_color_channel_is_critical_data_error(self) -> None:
         base = make_mono_catalog()
         color_product = base.products[0].__class__(
@@ -123,6 +171,25 @@ class TcoCalculatorTests(unittest.TestCase):
         with self.assertRaises(MissingCriticalData):
             calculate_tco(catalog, "p1", scenario(600), require_verified_evidence=False)
 
+    def test_explicitly_incomplete_maintenance_data_blocks_calculation(self) -> None:
+        base = make_mono_catalog()
+        incomplete = base.products[0].__class__(
+            **{
+                **{field: getattr(base.products[0], field) for field in base.products[0].__dataclass_fields__},
+                "maintenance_data_status": MaintenanceDataStatus.INCOMPLETE,
+            }
+        )
+        catalog = Catalog(
+            products=(incomplete,),
+            consumables=base.consumables,
+            product_consumables=base.product_consumables,
+            prices=base.prices,
+            evidence=base.evidence,
+        )
+
+        with self.assertRaises(MissingCriticalData):
+            calculate_tco(catalog, "p1", scenario(600), require_verified_evidence=False)
+
     def test_conflicting_evidence_is_not_treated_as_verified(self) -> None:
         catalog = make_mono_catalog(verified=False)
 
@@ -141,4 +208,3 @@ class TcoCalculatorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

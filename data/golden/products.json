@@ -1,1 +1,92 @@
-[]
+[
+  {
+    "id": "hp-laserjet-m111w",
+    "manufacturer": "HP",
+    "model": "LaserJet M111w",
+    "mpn": "7MD68A",
+    "product_type": "printer",
+    "print_technology": "laser",
+    "color_mode": "mono",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": 1000,
+    "expected_consumable_channels": [
+      "black"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "pantum-p2500w",
+    "manufacturer": "Pantum",
+    "model": "P2500W",
+    "product_type": "printer",
+    "print_technology": "laser",
+    "color_mode": "mono",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": 2000,
+    "expected_consumable_channels": [
+      "black"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "canon-isensys-lbp122dw",
+    "manufacturer": "Canon",
+    "model": "i-SENSYS LBP122dw",
+    "mpn": "5620C001",
+    "product_type": "printer",
+    "print_technology": "laser",
+    "color_mode": "mono",
+    "wifi": true,
+    "auto_duplex": true,
+    "recommended_monthly_volume": 1500,
+    "expected_consumable_channels": [
+      "black"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "epson-ecotank-l3250",
+    "manufacturer": "Epson",
+    "model": "EcoTank L3250",
+    "mpn": "C11CJ67405",
+    "product_type": "mfp",
+    "print_technology": "ink_tank",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": null,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  },
+  {
+    "id": "hp-color-laser-150nw",
+    "manufacturer": "HP",
+    "model": "Color Laser 150nw",
+    "mpn": "4ZB95A",
+    "product_type": "printer",
+    "print_technology": "laser",
+    "color_mode": "color",
+    "wifi": true,
+    "auto_duplex": false,
+    "recommended_monthly_volume": 500,
+    "expected_consumable_channels": [
+      "black",
+      "cyan",
+      "magenta",
+      "yellow"
+    ],
+    "maintenance_data_status": "complete",
+    "status": "active"
+  }
+]

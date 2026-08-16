@@ -23,6 +23,7 @@ class ScenarioResult:
     decision_engine_winner: Product | None
     purchase_price_winner_tco: TcoBreakdown | None
     decision_engine_winner_tco: TcoBreakdown | None
+    decision_engine_warnings: tuple[str, ...]
     data_exclusions: tuple[tuple[str, str], ...]
 
 
@@ -50,6 +51,7 @@ def evaluate_scenario(catalog: Catalog, scenario: UsageScenario) -> ScenarioResu
             decision_engine_winner=None,
             purchase_price_winner_tco=None,
             decision_engine_winner_tco=None,
+            decision_engine_warnings=(),
             data_exclusions=tuple(data_exclusions),
         )
 
@@ -63,6 +65,9 @@ def evaluate_scenario(catalog: Catalog, scenario: UsageScenario) -> ScenarioResu
         decision_engine_winner=decision[0],
         purchase_price_winner_tco=purchase[1],
         decision_engine_winner_tco=decision[1],
+        decision_engine_warnings=evaluate_eligibility(
+            catalog, decision[0], scenario
+        ).warnings,
         data_exclusions=tuple(data_exclusions),
     )
 
@@ -136,11 +141,13 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
                 f"- Decision Engine winner: **{result.decision_engine_winner.manufacturer} {result.decision_engine_winner.model}** — purchase {_money(result.decision_engine_winner_tco.purchase_cost_rub)}, consumables {_money(result.decision_engine_winner_tco.consumables_cost_rub)}, maintenance {_money(result.decision_engine_winner_tco.maintenance_cost_rub)}, total {_money(result.decision_engine_winner_tco.total_cost_rub)}",
                 f"- Savings vs purchase-price baseline: **{_money(savings_value)}**",
                 "- Evidence coverage for recommendation: **100% of required calculation facts**",
-                "",
-                "Purchased units for the recommendation:",
-                "",
             ]
         )
+        if result.decision_engine_warnings:
+            lines.extend(
+                f"- Warning: {warning}" for warning in result.decision_engine_warnings
+            )
+        lines.extend(["", "Purchased units for the recommendation:", ""])
         lines.extend(
             f"- `{component.channel}` / `{component.consumable_id}`: {component.units_purchased} × {_money(component.unit_price_rub)} (demand {component.demand_pages}, starter/installed capacity {component.starter_capacity_pages}, package yield {component.unit_capacity_pages})"
             for component in result.decision_engine_winner_tco.components
@@ -163,4 +170,3 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
 def write_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(build_report(catalog, scenarios), encoding="utf-8")
-

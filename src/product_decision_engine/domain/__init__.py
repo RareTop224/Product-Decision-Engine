@@ -3,6 +3,7 @@ from .models import (
     Consumable,
     ConsumableKind,
     Evidence,
+    MaintenanceDataStatus,
     PageScope,
     PriceObservation,
     Product,
@@ -18,6 +19,7 @@ __all__ = [
     "Consumable",
     "ConsumableKind",
     "Evidence",
+    "MaintenanceDataStatus",
     "PageScope",
     "PriceObservation",
     "Product",
@@ -27,4 +29,3 @@ __all__ = [
     "UsageScenario",
     "VerificationStatus",
 ]
-

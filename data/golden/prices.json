@@ -1,1 +1,146 @@
-[]
+[
+  {
+    "id": "price-hp-m111w-device",
+    "entity_type": "product",
+    "entity_id": "hp-laserjet-m111w",
+    "price_rub": 17750,
+    "source_id": "evidence-price-hp-m111w-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-w1500a",
+    "entity_type": "consumable",
+    "entity_id": "hp-w1500a",
+    "price_rub": 6300,
+    "source_id": "evidence-price-hp-w1500a",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-pantum-p2500w-device",
+    "entity_type": "product",
+    "entity_id": "pantum-p2500w",
+    "price_rub": 10590,
+    "source_id": "evidence-price-pantum-p2500w-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-pantum-pc211p",
+    "entity_type": "consumable",
+    "entity_id": "pantum-pc211p",
+    "price_rub": 3190,
+    "source_id": "evidence-price-pantum-pc211p",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-lbp122dw-device",
+    "entity_type": "product",
+    "entity_id": "canon-isensys-lbp122dw",
+    "price_rub": 31280,
+    "source_id": "evidence-price-canon-lbp122dw-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-071h",
+    "entity_type": "consumable",
+    "entity_id": "canon-071h",
+    "price_rub": 6550,
+    "source_id": "evidence-price-canon-071h",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-l3250-device",
+    "entity_type": "product",
+    "entity_id": "epson-ecotank-l3250",
+    "price_rub": 18390,
+    "source_id": "evidence-price-epson-l3250-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-103-black",
+    "entity_type": "consumable",
+    "entity_id": "epson-103-black",
+    "price_rub": 1104,
+    "source_id": "evidence-price-epson-103-black",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-103-cyan",
+    "entity_type": "consumable",
+    "entity_id": "epson-103-cyan",
+    "price_rub": 1116,
+    "source_id": "evidence-price-epson-103-cyan",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-103-magenta",
+    "entity_type": "consumable",
+    "entity_id": "epson-103-magenta",
+    "price_rub": 1116,
+    "source_id": "evidence-price-epson-103-magenta",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-103-yellow",
+    "entity_type": "consumable",
+    "entity_id": "epson-103-yellow",
+    "price_rub": 1116,
+    "source_id": "evidence-price-epson-103-yellow",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-150nw-device",
+    "entity_type": "product",
+    "entity_id": "hp-color-laser-150nw",
+    "price_rub": 41311,
+    "source_id": "evidence-price-hp-150nw-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-117a-black",
+    "entity_type": "consumable",
+    "entity_id": "hp-117a-black",
+    "price_rub": 5985,
+    "source_id": "evidence-price-hp-117a-black",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-117a-cyan",
+    "entity_type": "consumable",
+    "entity_id": "hp-117a-cyan",
+    "price_rub": 5733,
+    "source_id": "evidence-price-hp-117a-cyan",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-117a-magenta",
+    "entity_type": "consumable",
+    "entity_id": "hp-117a-magenta",
+    "price_rub": 5512,
+    "source_id": "evidence-price-hp-117a-magenta",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-117a-yellow",
+    "entity_type": "consumable",
+    "entity_id": "hp-117a-yellow",
+    "price_rub": 5843,
+    "source_id": "evidence-price-hp-117a-yellow",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-120a-drum",
+    "entity_type": "consumable",
+    "entity_id": "hp-120a-drum",
+    "price_rub": 15225,
+    "source_id": "evidence-price-hp-120a-drum",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-hp-5kz38a",
+    "entity_type": "consumable",
+    "entity_id": "hp-5kz38a-toner-collection",
+    "price_rub": 2591,
+    "source_id": "evidence-price-hp-5kz38a",
+    "observed_at": "2026-08-16"
+  }
+]

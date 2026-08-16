@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from .models import (
     Consumable,
     Evidence,
+    MaintenanceDataStatus,
     PriceObservation,
     Product,
     ProductConsumable,
@@ -83,6 +84,8 @@ class Catalog:
 
     def data_issues(self, product: Product, scenario: UsageScenario) -> tuple[str, ...]:
         issues: list[str] = []
+        if product.maintenance_data_status == MaintenanceDataStatus.INCOMPLETE:
+            issues.append("maintenance data is explicitly incomplete")
         replacement_links = self.links(product.id, ProductConsumableRole.REPLACEMENT)
         starter_links = self.links(product.id, ProductConsumableRole.STARTER)
 
@@ -108,4 +111,3 @@ class Catalog:
             issues.append("no replacement consumable covers mono pages")
 
         return tuple(issues)
-

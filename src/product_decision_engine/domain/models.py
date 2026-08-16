@@ -42,6 +42,12 @@ class VerificationStatus(StrEnum):
     REJECTED = "rejected"
 
 
+class MaintenanceDataStatus(StrEnum):
+    COMPLETE = "complete"
+    NOT_PUBLISHED = "not_published"
+    INCOMPLETE = "incomplete"
+
+
 @dataclass(frozen=True, slots=True)
 class Product:
     id: str
@@ -54,6 +60,7 @@ class Product:
     auto_duplex: bool
     recommended_monthly_volume: int | None
     expected_consumable_channels: tuple[str, ...]
+    maintenance_data_status: MaintenanceDataStatus
     status: str = "active"
     mpn: str | None = None
 
@@ -92,11 +99,17 @@ class ProductConsumable:
     channel: str
     page_scope: PageScope
     quantity_in_box: int = 1
+    mono_page_weight: int = 1
+    color_page_weight: int = 1
     notes: str | None = None
 
     def __post_init__(self) -> None:
         if self.quantity_in_box <= 0:
             raise ValueError("quantity_in_box must be positive")
+        if self.mono_page_weight < 0 or self.color_page_weight < 0:
+            raise ValueError("page weights must not be negative")
+        if self.mono_page_weight == 0 and self.color_page_weight == 0:
+            raise ValueError("at least one page weight must be positive")
 
 
 @dataclass(frozen=True, slots=True)
@@ -162,4 +175,3 @@ class UsageScenario:
     @property
     def all_pages_total(self) -> int:
         return self.mono_pages_total + self.color_pages_total
-
