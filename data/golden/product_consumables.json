@@ -501,5 +501,354 @@
     "channel": "yellow",
     "page_scope": "color_pages",
     "notes": "Each color bottle is required for the published composite-color yield."
+  },
+  {
+    "id": "link-epson-l4260-starter-black",
+    "product_id": "epson-ecotank-l4260",
+    "consumable_id": "epson-l4260-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-epson-l4260-replacement-black",
+    "product_id": "epson-ecotank-l4260",
+    "consumable_id": "epson-101-black",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-epson-l4260-starter-cyan",
+    "product_id": "epson-ecotank-l4260",
+    "consumable_id": "epson-l4260-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-epson-l4260-replacement-cyan",
+    "product_id": "epson-ecotank-l4260",
+    "consumable_id": "epson-101-cyan",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-epson-l4260-starter-magenta",
+    "product_id": "epson-ecotank-l4260",
+    "consumable_id": "epson-l4260-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-epson-l4260-replacement-magenta",
+    "product_id": "epson-ecotank-l4260",
+    "consumable_id": "epson-101-magenta",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-epson-l4260-starter-yellow",
+    "product_id": "epson-ecotank-l4260",
+    "consumable_id": "epson-l4260-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-epson-l4260-replacement-yellow",
+    "product_id": "epson-ecotank-l4260",
+    "consumable_id": "epson-101-yellow",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t520-starter-black",
+    "product_id": "brother-dcp-t520w",
+    "consumable_id": "brother-btd60bk",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "quantity_in_box": 2
+  },
+  {
+    "id": "link-brother-t520-replacement-black",
+    "product_id": "brother-dcp-t520w",
+    "consumable_id": "brother-btd60bk",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-brother-t520-starter-cyan",
+    "product_id": "brother-dcp-t520w",
+    "consumable_id": "brother-bt5000c",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t520-replacement-cyan",
+    "product_id": "brother-dcp-t520w",
+    "consumable_id": "brother-bt5000c",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t520-starter-magenta",
+    "product_id": "brother-dcp-t520w",
+    "consumable_id": "brother-bt5000m",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t520-replacement-magenta",
+    "product_id": "brother-dcp-t520w",
+    "consumable_id": "brother-bt5000m",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t520-starter-yellow",
+    "product_id": "brother-dcp-t520w",
+    "consumable_id": "brother-bt5000y",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t520-replacement-yellow",
+    "product_id": "brother-dcp-t520w",
+    "consumable_id": "brother-bt5000y",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t720-starter-black",
+    "product_id": "brother-dcp-t720dw",
+    "consumable_id": "brother-btd60bk",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages",
+    "quantity_in_box": 2
+  },
+  {
+    "id": "link-brother-t720-replacement-black",
+    "product_id": "brother-dcp-t720dw",
+    "consumable_id": "brother-btd60bk",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-brother-t720-starter-cyan",
+    "product_id": "brother-dcp-t720dw",
+    "consumable_id": "brother-bt5000c",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t720-replacement-cyan",
+    "product_id": "brother-dcp-t720dw",
+    "consumable_id": "brother-bt5000c",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t720-starter-magenta",
+    "product_id": "brother-dcp-t720dw",
+    "consumable_id": "brother-bt5000m",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t720-replacement-magenta",
+    "product_id": "brother-dcp-t720dw",
+    "consumable_id": "brother-bt5000m",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t720-starter-yellow",
+    "product_id": "brother-dcp-t720dw",
+    "consumable_id": "brother-bt5000y",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-brother-t720-replacement-yellow",
+    "product_id": "brother-dcp-t720dw",
+    "consumable_id": "brother-bt5000y",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-pantum-m6500-starter-black",
+    "product_id": "pantum-m6500w",
+    "consumable_id": "pantum-pc211p",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-pantum-m6500-replacement-black",
+    "product_id": "pantum-m6500w",
+    "consumable_id": "pantum-pc211p",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-pantum-m7100-starter-black",
+    "product_id": "pantum-m7100dw",
+    "consumable_id": "pantum-m7100-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-pantum-m7100-replacement-black",
+    "product_id": "pantum-m7100dw",
+    "consumable_id": "pantum-tl420x",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-pantum-m7100-maintenance-drum",
+    "product_id": "pantum-m7100dw",
+    "consumable_id": "pantum-dl420",
+    "role": "maintenance",
+    "channel": "drum",
+    "page_scope": "all_pages",
+    "installed_yield_value": 12000,
+    "notes": "The installed DL-420HE starter drum is rated for 12,000 pages; replacement DL-420 is rated for 30,000 pages."
+  },
+  {
+    "id": "link-xerox-b225-starter-black",
+    "product_id": "xerox-b225",
+    "consumable_id": "xerox-b225-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-xerox-b225-replacement-black",
+    "product_id": "xerox-b225",
+    "consumable_id": "xerox-006r04404",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-xerox-b225-maintenance-drum",
+    "product_id": "xerox-b225",
+    "consumable_id": "xerox-013r00691",
+    "role": "maintenance",
+    "channel": "drum",
+    "page_scope": "all_pages",
+    "notes": "Published 12,000-page approximate yield varies with job run length, media size/orientation and print mode."
+  },
+  {
+    "id": "link-canon-mf3010-starter-black",
+    "product_id": "canon-isensys-mf3010",
+    "consumable_id": "canon-mf3010-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-canon-mf3010-replacement-black",
+    "product_id": "canon-isensys-mf3010",
+    "consumable_id": "canon-cartridge-725",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-starter-black",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-cm1100-inbox-black",
+    "role": "starter",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-replacement-black",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-ctl1100xk",
+    "role": "replacement",
+    "channel": "black",
+    "page_scope": "all_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-starter-cyan",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-cm1100-inbox-cyan",
+    "role": "starter",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-replacement-cyan",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-ctl1100xc",
+    "role": "replacement",
+    "channel": "cyan",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-starter-magenta",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-cm1100-inbox-magenta",
+    "role": "starter",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-replacement-magenta",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-ctl1100xm",
+    "role": "replacement",
+    "channel": "magenta",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-starter-yellow",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-cm1100-inbox-yellow",
+    "role": "starter",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-replacement-yellow",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-ctl1100xy",
+    "role": "replacement",
+    "channel": "yellow",
+    "page_scope": "color_pages"
+  },
+  {
+    "id": "link-pantum-cm1100-maintenance-waste",
+    "product_id": "pantum-cm1100adw",
+    "consumable_id": "pantum-cwt1100",
+    "role": "maintenance",
+    "channel": "waste_toner",
+    "page_scope": "all_pages"
   }
 ]

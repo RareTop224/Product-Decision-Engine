@@ -138,7 +138,7 @@ def calculate_tco(
     for maintenance in maintenance_links:
         consumable = catalog.consumable(maintenance.consumable_id)
         demand = _demand_for_link(maintenance, scenario)
-        installed_capacity = consumable.yield_value
+        installed_capacity = maintenance.installed_yield_value or consumable.yield_value
         package_capacity = consumable.yield_value * maintenance.quantity_in_box
         units = _ceil_div(demand - installed_capacity, package_capacity)
         unit_price = catalog.latest_price("consumable", consumable.id).price_rub

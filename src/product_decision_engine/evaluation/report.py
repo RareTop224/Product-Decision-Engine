@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from statistics import median
 
@@ -40,6 +40,17 @@ class ScenarioResult:
     decision_engine_warnings: tuple[str, ...]
     constraint_exclusions: tuple[tuple[str, tuple[str, ...]], ...]
     data_exclusions: tuple[tuple[str, str], ...]
+
+
+@dataclass(frozen=True, slots=True)
+class PriceRobustness:
+    winner_id: str
+    winner_tco_min_rub: int
+    winner_tco_max_rub: int
+    best_challenger_id: str | None
+    best_challenger_tco_min_rub: int | None
+    has_observed_range: bool
+    robust: bool
 
 
 def evaluate_scenario(catalog: Catalog, scenario: UsageScenario) -> ScenarioResult:
@@ -171,8 +182,98 @@ def _sensitivity_results(catalog: Catalog) -> tuple[ScenarioResult, ...]:
     )
 
 
+def _catalog_at_price_bound(catalog: Catalog, *, use_maximum: bool) -> Catalog:
+    by_entity: dict[tuple[str, str], list] = {}
+    for observation in catalog.prices:
+        by_entity.setdefault(
+            (observation.entity_type, observation.entity_id), []
+        ).append(observation)
+
+    selected_ids = {
+        max(items, key=lambda item: (item.price_rub, item.observed_at, item.id)).id
+        if use_maximum
+        else min(items, key=lambda item: (item.price_rub, item.observed_at, item.id)).id
+        for items in by_entity.values()
+    }
+    return replace(
+        catalog,
+        prices=tuple(
+            replace(item, is_primary=item.id in selected_ids)
+            for item in catalog.prices
+        ),
+    )
+
+
+def _priced_entities_for_product(
+    catalog: Catalog,
+    product: Product,
+) -> tuple[tuple[str, str], ...]:
+    entities: list[tuple[str, str]] = [("product", product.id)]
+    entities.extend(
+        ("consumable", link.consumable_id)
+        for link in catalog.links(product.id)
+        if link.role != ProductConsumableRole.STARTER
+    )
+    return tuple(dict.fromkeys(entities))
+
+
+def evaluate_price_robustness(
+    catalog: Catalog,
+    result: ScenarioResult,
+) -> PriceRobustness | None:
+    winner = result.decision_engine_winner
+    if winner is None:
+        return None
+
+    low_catalog = _catalog_at_price_bound(catalog, use_maximum=False)
+    high_catalog = _catalog_at_price_bound(catalog, use_maximum=True)
+    bounds: list[tuple[Product, int, int]] = []
+    for product in catalog.products:
+        if product.status != "active":
+            continue
+        if not evaluate_eligibility(catalog, product, result.scenario).eligible:
+            continue
+        try:
+            low = calculate_tco(low_catalog, product.id, result.scenario)
+            high = calculate_tco(high_catalog, product.id, result.scenario)
+        except MissingCriticalData:
+            continue
+        bounds.append((product, low.total_cost_rub, high.total_cost_rub))
+
+    winner_bound = next(item for item in bounds if item[0].id == winner.id)
+    challengers = sorted(
+        (item for item in bounds if item[0].id != winner.id),
+        key=lambda item: (item[1], item[0].id),
+    )
+    best_challenger = challengers[0] if challengers else None
+    has_observed_range = any(
+        len(catalog.price_observations(entity_type, entity_id)) >= 2
+        for product, _, _ in bounds
+        for entity_type, entity_id in _priced_entities_for_product(catalog, product)
+    )
+    return PriceRobustness(
+        winner_id=winner.id,
+        winner_tco_min_rub=winner_bound[1],
+        winner_tco_max_rub=winner_bound[2],
+        best_challenger_id=best_challenger[0].id if best_challenger else None,
+        best_challenger_tco_min_rub=best_challenger[1] if best_challenger else None,
+        has_observed_range=has_observed_range,
+        robust=bool(
+            best_challenger
+            and winner_bound[2] < best_challenger[1]
+        ),
+    )
+
+
 def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
     results = tuple(evaluate_scenario(catalog, scenario) for scenario in scenarios)
+    price_robustness = tuple(
+        evaluate_price_robustness(catalog, result) for result in results
+    )
+    ranged_robustness = tuple(
+        item for item in price_robustness if item and item.has_observed_range
+    )
+    robust_recommendations = sum(item.robust for item in ranged_robustness)
     sensitivity = _sensitivity_results(catalog)
     complete = tuple(result for result in results if result.decision_engine_winner is not None)
     competitive = tuple(result for result in complete if result.candidate_count >= 2)
@@ -212,6 +313,24 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         if result.decision_engine_winner is not None
     )
     most_common_winner = winner_counts.most_common(1)[0] if winner_counts else None
+    winner_brand_counts = Counter(
+        result.decision_engine_winner.manufacturer
+        for result in complete
+        if result.decision_engine_winner is not None
+    )
+    winner_technology_counts = Counter(
+        result.decision_engine_winner.print_technology
+        for result in complete
+        if result.decision_engine_winner is not None
+    )
+    most_common_winner_brand = (
+        winner_brand_counts.most_common(1)[0] if winner_brand_counts else None
+    )
+    most_common_winner_technology = (
+        winner_technology_counts.most_common(1)[0]
+        if winner_technology_counts
+        else None
+    )
     sensitivity_winner_ids = {
         result.decision_engine_winner.id
         for result in sensitivity
@@ -229,6 +348,10 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         bool(audit_product(catalog, product).conflicts)
         for product in catalog.products
     )
+    price_entity_counts = Counter(
+        (item.entity_type, item.entity_id) for item in catalog.prices
+    )
+    repeated_price_entities = sum(count >= 2 for count in price_entity_counts.values())
     execution_viable = bool(scenarios) and len(competitive) == len(scenarios)
     early_value_signal = bool(competitive_changed) and len(sensitivity_winner_ids) >= 2
 
@@ -279,6 +402,10 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         f"- Медианный отрыв победителя от второго места: {_money(int(median(decision_margins)))}"
         if decision_margins
         else "- Медианный отрыв победителя от второго места: нет данных",
+        f"- Предварительный стресс-тест не меняет рекомендацию в доступных диапазонах цен: {robust_recommendations} / {len(ranged_robustness)} сценариев"
+        if ranged_robustness
+        else "- Проверка диапазона цен: пока нет повторных наблюдений",
+        f"- Покрытие повторными ценовыми наблюдениями: {repeated_price_entities} / {len(price_entity_counts)} оцениваемых сущностей",
     ]
     if most_common_winner:
         product = catalog.product(most_common_winner[0])
@@ -286,6 +413,18 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
             f"- Концентрация лидера: **{_product_name(product)}** выигрывает "
             f"{most_common_winner[1]} / {len(complete)} сценариев "
             f"({_percent(most_common_winner[1], len(complete))})"
+        )
+    if most_common_winner_brand:
+        lines.append(
+            f"- Концентрация бренда среди победителей: **{most_common_winner_brand[0]}** — "
+            f"{most_common_winner_brand[1]} / {len(complete)} сценариев "
+            f"({_percent(most_common_winner_brand[1], len(complete))})"
+        )
+    if most_common_winner_technology:
+        lines.append(
+            f"- Концентрация технологии среди победителей: **{most_common_winner_technology[0]}** — "
+            f"{most_common_winner_technology[1]} / {len(complete)} сценариев "
+            f"({_percent(most_common_winner_technology[1], len(complete))})"
         )
     if narrowest_result:
         assert narrowest_result.decision_engine_winner_tco is not None
@@ -311,6 +450,15 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
                 "- Что блокирует итоговый вывод: набор меньше целевых 30–50 моделей, цены остаются ручными test observations, а региональные конфликты и непубликованные параметры ещё требуют проверки.",
             ]
         )
+        if most_common_winner_brand and most_common_winner_brand[1] * 3 >= len(complete) * 2:
+            lines.append(
+                f"- Риск концентрации: бренд {most_common_winner_brand[0]} даёт "
+                f"{most_common_winner_brand[1]} из {len(complete)} победителей; следующий сбор должен добавить прямые альтернативы других брендов, а не случайные модели."
+            )
+        if repeated_price_entities * 2 < len(price_entity_counts):
+            lines.append(
+                f"- Стресс-тест цен пока разреженный: повторные наблюдения есть только для {repeated_price_entities} из {len(price_entity_counts)} ценовых сущностей, поэтому его результат нельзя считать доказанной рыночной устойчивостью."
+            )
     else:
         lines.extend(
             [
@@ -321,7 +469,7 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
 
     lines.extend(["", "## Результаты по сценариям", ""])
 
-    for result in results:
+    for result, robustness in zip(results, price_robustness, strict=True):
         lines.extend([f"### {result.scenario.name}", ""])
         lines.append(
             f"Кандидатов после hard constraints и проверки данных: **{result.candidate_count}**."
@@ -356,6 +504,27 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
                 f"- Ближайшая альтернатива: **{_product_name(result.decision_runner_up)}** — "
                 f"TCO {_money(result.decision_runner_up_tco.total_cost_rub)}, "
                 f"отрыв {_money(result.decision_runner_up_tco.total_cost_rub - result.decision_engine_winner_tco.total_cost_rub)}"
+            )
+        if robustness and robustness.has_observed_range:
+            challenger = (
+                catalog.product(robustness.best_challenger_id)
+                if robustness.best_challenger_id
+                else None
+            )
+            robustness_label = (
+                "предварительно устойчива по имеющимся наблюдениям"
+                if robustness.robust
+                else "чувствительна уже в имеющихся наблюдениях"
+            )
+            lines.append(
+                f"- Проверка ценового диапазона: рекомендация **{robustness_label}**; "
+                f"TCO победителя {_money(robustness.winner_tco_min_rub)}–{_money(robustness.winner_tco_max_rub)}"
+                + (
+                    f", минимальный TCO альтернативы **{_product_name(challenger)}** — "
+                    f"{_money(robustness.best_challenger_tco_min_rub)}"
+                    if challenger and robustness.best_challenger_tco_min_rub is not None
+                    else ""
+                )
             )
         if result.candidate_count == 1:
             lines.append(
@@ -451,6 +620,7 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
             "## Ограничения текущей модели",
             "",
             "- Цены являются ручными тестовыми наблюдениями на указанную дату и не образуют production price feed.",
+            "- Проверка диапазона цен консервативно сочетает максимум цен победителя с минимумом цен альтернатив; диапазоны пока есть не для всех устройств и расходников.",
             "- Для цветных устройств CMY replacement demand относится к цветным страницам. Неопределённый расход цветного тонера на калибровку и часть монохромных заданий отдельно не прогнозируется.",
             "- В Фазе 0 выбран один обоснованный OEM replacement на канал; оптимизация между standard и high-yield упаковками пока не выполняется.",
             "- Отсутствующий рекомендованный месячный объём и непубликованный maintenance schedule показываются как пробелы, а не заполняются оценкой.",

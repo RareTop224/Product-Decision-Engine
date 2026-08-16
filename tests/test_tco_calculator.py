@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 
 from product_decision_engine.domain.catalog import Catalog, MissingCriticalData
 from product_decision_engine.domain.models import (
@@ -85,6 +86,40 @@ class TcoCalculatorTests(unittest.TestCase):
         self.assertEqual(result.maintenance_cost_rub, 2_000)
         drum = next(item for item in result.components if item.channel == "drum")
         self.assertEqual(drum.units_purchased, 1)
+
+    def test_installed_maintenance_yield_can_differ_from_replacement(self) -> None:
+        base = make_mono_catalog(drum_yield=1_000, drum_price=2_000)
+        links = tuple(
+            replace(link, installed_yield_value=500)
+            if link.channel == "drum"
+            else link
+            for link in base.product_consumables
+        )
+        catalog = replace(base, product_consumables=links)
+
+        first_replacement = calculate_tco(catalog, "p1", scenario(501))
+        still_one_replacement = calculate_tco(catalog, "p1", scenario(1_500))
+        second_replacement = calculate_tco(catalog, "p1", scenario(1_501))
+
+        self.assertEqual(first_replacement.maintenance_cost_rub, 2_000)
+        self.assertEqual(still_one_replacement.maintenance_cost_rub, 2_000)
+        self.assertEqual(second_replacement.maintenance_cost_rub, 4_000)
+
+    def test_non_primary_price_does_not_change_headline_tco(self) -> None:
+        base = make_mono_catalog()
+        secondary = replace(
+            base.prices[0],
+            id="p1-product-price-secondary",
+            price_rub=1,
+            source_id="p1-product-price-evidence",
+            is_primary=False,
+        )
+        catalog = replace(base, prices=(*base.prices, secondary))
+
+        result = calculate_tco(catalog, "p1", scenario(0))
+
+        self.assertEqual(result.purchase_cost_rub, 10_000)
+        self.assertEqual(len(catalog.price_observations("product", "p1")), 2)
 
     def test_color_pages_can_consume_multiple_drum_equivalent_units(self) -> None:
         base = make_mono_catalog(drum_yield=16_000, drum_price=2_000)

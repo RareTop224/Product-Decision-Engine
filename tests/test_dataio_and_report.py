@@ -2,13 +2,21 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 
 from product_decision_engine.dataio import load_catalog, load_scenarios
 from product_decision_engine.domain.models import UsageScenario
 from product_decision_engine.evidence import audit_product
-from product_decision_engine.evaluation.report import build_report
+from product_decision_engine.evaluation.report import (
+    build_report,
+    evaluate_price_robustness,
+    evaluate_scenario,
+)
 from product_decision_engine.tco import calculate_tco
+
+from helpers import make_mono_catalog, merge_catalogs
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -21,15 +29,27 @@ class DataAndReportTests(unittest.TestCase):
         catalog = load_catalog(data_dir)
         scenarios = load_scenarios(data_dir / "scenarios.json")
 
-        self.assertEqual(len(catalog.products), 12)
-        self.assertEqual(len(catalog.prices), 41)
-        self.assertEqual(len(catalog.evidence), 226)
+        self.assertEqual(len(catalog.products), 20)
+        self.assertEqual(len(catalog.prices), 73)
+        self.assertEqual(len(catalog.evidence), 376)
         self.assertTrue(all(not audit_product(catalog, item).missing for item in catalog.products))
+        primary_prices = Counter(
+            (item.entity_type, item.entity_id)
+            for item in catalog.prices
+            if item.is_primary
+        )
+        all_price_entities = {
+            (item.entity_type, item.entity_id) for item in catalog.prices
+        }
+        self.assertEqual(set(primary_prices), all_price_entities)
+        self.assertTrue(all(count == 1 for count in primary_prices.values()))
         conflict_audit = audit_product(
             catalog,
             catalog.product("canon-isensys-mf655cdw"),
         )
         self.assertEqual(len(conflict_audit.conflicts), 1)
+        xerox_conflict = audit_product(catalog, catalog.product("xerox-b225"))
+        self.assertEqual(len(xerox_conflict.conflicts), 1)
         self.assertEqual(len(scenarios), 15)
 
     def test_g3411_exact_bundle_uses_two_starter_black_bottles(self) -> None:
@@ -79,7 +99,59 @@ class DataAndReportTests(unittest.TestCase):
         self.assertIn("Публикационный пробел: `recommended_monthly_volume`", report)
         self.assertIn("Конфликт источников:", report)
         self.assertIn("## Ограничения текущей модели", report)
+        self.assertIn("Предварительный стресс-тест не меняет рекомендацию", report)
+        self.assertIn("Концентрация бренда среди победителей", report)
+        self.assertIn("Покрытие повторными ценовыми наблюдениями", report)
+        self.assertIn("Проверка ценового диапазона", report)
         self.assertNotIn("Phase 0 evaluation report", report)
+
+    def test_price_robustness_detects_observed_winner_flip(self) -> None:
+        winner_catalog = make_mono_catalog(prefix="winner", purchase_price=10_000)
+        challenger_catalog = make_mono_catalog(prefix="challenger", purchase_price=11_000)
+        primary_price = winner_catalog.prices[0]
+        secondary_price = replace(
+            primary_price,
+            id="winner-product-price-secondary",
+            price_rub=12_000,
+            source_id="winner-product-price-secondary-evidence",
+            is_primary=False,
+        )
+        primary_evidence = next(
+            item
+            for item in winner_catalog.evidence
+            if item.entity_type == "price_observation"
+            and item.entity_id == primary_price.id
+        )
+        secondary_evidence = replace(
+            primary_evidence,
+            id=secondary_price.source_id,
+            entity_id=secondary_price.id,
+        )
+        winner_catalog = replace(
+            winner_catalog,
+            prices=(*winner_catalog.prices, secondary_price),
+            evidence=(*winner_catalog.evidence, secondary_evidence),
+        )
+        catalog = merge_catalogs(winner_catalog, challenger_catalog)
+        scenario = UsageScenario(
+            id="price-range",
+            name="Price range",
+            mono_pages_per_month=0,
+            color_pages_per_month=0,
+            ownership_months=60,
+        )
+
+        result = evaluate_scenario(catalog, scenario)
+        robustness = evaluate_price_robustness(catalog, result)
+
+        self.assertEqual(result.decision_engine_winner.id, "winner")
+        self.assertIsNotNone(robustness)
+        assert robustness is not None
+        self.assertTrue(robustness.has_observed_range)
+        self.assertFalse(robustness.robust)
+        self.assertEqual(robustness.winner_tco_max_rub, 12_000)
+        self.assertEqual(robustness.best_challenger_id, "challenger")
+        self.assertEqual(robustness.best_challenger_tco_min_rub, 11_000)
 
 
 if __name__ == "__main__":

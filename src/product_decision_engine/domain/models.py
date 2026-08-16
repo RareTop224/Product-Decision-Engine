@@ -101,6 +101,7 @@ class ProductConsumable:
     quantity_in_box: int = 1
     mono_page_weight: int = 1
     color_page_weight: int = 1
+    installed_yield_value: int | None = None
     notes: str | None = None
 
     def __post_init__(self) -> None:
@@ -110,6 +111,8 @@ class ProductConsumable:
             raise ValueError("page weights must not be negative")
         if self.mono_page_weight == 0 and self.color_page_weight == 0:
             raise ValueError("at least one page weight must be positive")
+        if self.installed_yield_value is not None and self.installed_yield_value <= 0:
+            raise ValueError("installed_yield_value must be positive")
 
 
 @dataclass(frozen=True, slots=True)
@@ -120,6 +123,7 @@ class PriceObservation:
     price_rub: int
     source_id: str
     observed_at: str
+    is_primary: bool = True
 
     def __post_init__(self) -> None:
         if self.price_rub < 0:

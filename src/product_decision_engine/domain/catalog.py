@@ -56,11 +56,26 @@ class Catalog:
         observations = [
             item
             for item in self.prices
-            if item.entity_type == entity_type and item.entity_id == entity_id
+            if item.entity_type == entity_type
+            and item.entity_id == entity_id
+            and item.is_primary
         ]
         if not observations:
-            raise MissingCriticalData(f"Missing price for {entity_type} {entity_id}")
+            raise MissingCriticalData(
+                f"Missing primary price for {entity_type} {entity_id}"
+            )
         return max(observations, key=lambda item: (item.observed_at, item.id))
+
+    def price_observations(
+        self,
+        entity_type: str,
+        entity_id: str,
+    ) -> tuple[PriceObservation, ...]:
+        return tuple(
+            item
+            for item in self.prices
+            if item.entity_type == entity_type and item.entity_id == entity_id
+        )
 
     def has_verified_evidence(self, entity_type: str, entity_id: str, field_name: str) -> bool:
         return any(

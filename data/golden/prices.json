@@ -326,5 +326,267 @@
     "price_rub": 1240,
     "source_id": "evidence-price-canon-gi-490-yellow",
     "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-l4260-device",
+    "entity_type": "product",
+    "entity_id": "epson-ecotank-l4260",
+    "price_rub": 27484,
+    "source_id": "evidence-price-epson-l4260-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-101-black",
+    "entity_type": "consumable",
+    "entity_id": "epson-101-black",
+    "price_rub": 1603,
+    "source_id": "evidence-price-epson-101-black",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-101-cyan",
+    "entity_type": "consumable",
+    "entity_id": "epson-101-cyan",
+    "price_rub": 1157,
+    "source_id": "evidence-price-epson-101-cyan",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-101-magenta",
+    "entity_type": "consumable",
+    "entity_id": "epson-101-magenta",
+    "price_rub": 1094,
+    "source_id": "evidence-price-epson-101-magenta",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-epson-101-yellow",
+    "entity_type": "consumable",
+    "entity_id": "epson-101-yellow",
+    "price_rub": 968,
+    "source_id": "evidence-price-epson-101-yellow",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-brother-t520-device",
+    "entity_type": "product",
+    "entity_id": "brother-dcp-t520w",
+    "price_rub": 30500,
+    "source_id": "evidence-price-brother-t520-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-brother-t720-device",
+    "entity_type": "product",
+    "entity_id": "brother-dcp-t720dw",
+    "price_rub": 39000,
+    "source_id": "evidence-price-brother-t720-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-brother-btd60bk",
+    "entity_type": "consumable",
+    "entity_id": "brother-btd60bk",
+    "price_rub": 1350,
+    "source_id": "evidence-price-brother-btd60bk",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-brother-bt5000c",
+    "entity_type": "consumable",
+    "entity_id": "brother-bt5000c",
+    "price_rub": 1250,
+    "source_id": "evidence-price-brother-bt5000c",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-brother-bt5000m",
+    "entity_type": "consumable",
+    "entity_id": "brother-bt5000m",
+    "price_rub": 1250,
+    "source_id": "evidence-price-brother-bt5000m",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-brother-bt5000y",
+    "entity_type": "consumable",
+    "entity_id": "brother-bt5000y",
+    "price_rub": 840,
+    "source_id": "evidence-price-brother-bt5000y",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-pantum-m6500-device",
+    "entity_type": "product",
+    "entity_id": "pantum-m6500w",
+    "price_rub": 14790,
+    "source_id": "evidence-price-pantum-m6500-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-pantum-m7100-device",
+    "entity_type": "product",
+    "entity_id": "pantum-m7100dw",
+    "price_rub": 37600,
+    "source_id": "evidence-price-pantum-m7100-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-pantum-tl420x",
+    "entity_type": "consumable",
+    "entity_id": "pantum-tl420x",
+    "price_rub": 6990,
+    "source_id": "evidence-price-pantum-tl420x",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-pantum-dl420",
+    "entity_type": "consumable",
+    "entity_id": "pantum-dl420",
+    "price_rub": 4750,
+    "source_id": "evidence-price-pantum-dl420",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-xerox-b225-device",
+    "entity_type": "product",
+    "entity_id": "xerox-b225",
+    "price_rub": 15362,
+    "source_id": "evidence-price-xerox-b225-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-xerox-006r04404",
+    "entity_type": "consumable",
+    "entity_id": "xerox-006r04404",
+    "price_rub": 11324,
+    "source_id": "evidence-price-xerox-006r04404",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-xerox-013r00691",
+    "entity_type": "consumable",
+    "entity_id": "xerox-013r00691",
+    "price_rub": 10245,
+    "source_id": "evidence-price-xerox-013r00691",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-mf3010-device",
+    "entity_type": "product",
+    "entity_id": "canon-isensys-mf3010",
+    "price_rub": 19990,
+    "source_id": "evidence-price-canon-mf3010-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-canon-cartridge-725",
+    "entity_type": "consumable",
+    "entity_id": "canon-cartridge-725",
+    "price_rub": 5030,
+    "source_id": "evidence-price-canon-cartridge-725",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-pantum-cm1100-device",
+    "entity_type": "product",
+    "entity_id": "pantum-cm1100adw",
+    "price_rub": 59180,
+    "source_id": "evidence-price-pantum-cm1100-device",
+    "observed_at": "2026-08-16"
+  },
+  {
+    "id": "price-pantum-ctl1100xk",
+    "entity_type": "consumable",
+    "entity_id": "pantum-ctl1100xk",
+    "price_rub": 7300,
+    "source_id": "evidence-price-pantum-ctl1100xk",
+    "observed_at": "2025-12-28"
+  },
+  {
+    "id": "price-pantum-ctl1100xc",
+    "entity_type": "consumable",
+    "entity_id": "pantum-ctl1100xc",
+    "price_rub": 7300,
+    "source_id": "evidence-price-pantum-ctl1100xc",
+    "observed_at": "2025-12-28"
+  },
+  {
+    "id": "price-pantum-ctl1100xm",
+    "entity_type": "consumable",
+    "entity_id": "pantum-ctl1100xm",
+    "price_rub": 7300,
+    "source_id": "evidence-price-pantum-ctl1100xm",
+    "observed_at": "2025-12-28"
+  },
+  {
+    "id": "price-pantum-ctl1100xy",
+    "entity_type": "consumable",
+    "entity_id": "pantum-ctl1100xy",
+    "price_rub": 7300,
+    "source_id": "evidence-price-pantum-ctl1100xy",
+    "observed_at": "2025-12-28"
+  },
+  {
+    "id": "price-pantum-cwt1100",
+    "entity_type": "consumable",
+    "entity_id": "pantum-cwt1100",
+    "price_rub": 5500,
+    "source_id": "evidence-price-pantum-cwt1100",
+    "observed_at": "2025-12-28"
+  },
+  {
+    "id": "price-pantum-p2500w-device-kns",
+    "entity_type": "product",
+    "entity_id": "pantum-p2500w",
+    "price_rub": 8950,
+    "source_id": "evidence-price-pantum-p2500w-device-kns",
+    "observed_at": "2026-08-16",
+    "is_primary": false
+  },
+  {
+    "id": "price-epson-l3250-device-regard",
+    "entity_type": "product",
+    "entity_id": "epson-ecotank-l3250",
+    "price_rub": 17230,
+    "source_id": "evidence-price-epson-l3250-device-regard",
+    "observed_at": "2026-08-16",
+    "is_primary": false
+  },
+  {
+    "id": "price-pantum-m6500-device-technopark",
+    "entity_type": "product",
+    "entity_id": "pantum-m6500w",
+    "price_rub": 16990,
+    "source_id": "evidence-price-pantum-m6500-device-technopark",
+    "observed_at": "2026-08-16",
+    "is_primary": false
+  },
+  {
+    "id": "price-xerox-b225-device-market777",
+    "entity_type": "product",
+    "entity_id": "xerox-b225",
+    "price_rub": 17140,
+    "source_id": "evidence-price-xerox-b225-device-market777",
+    "observed_at": "2026-08-16",
+    "is_primary": false
+  },
+  {
+    "id": "price-epson-l4260-device-technocity",
+    "entity_type": "product",
+    "entity_id": "epson-ecotank-l4260",
+    "price_rub": 32380,
+    "source_id": "evidence-price-epson-l4260-device-technocity",
+    "observed_at": "2026-08-16",
+    "is_primary": false
+  },
+  {
+    "id": "price-brother-t720-device-price-ru",
+    "entity_type": "product",
+    "entity_id": "brother-dcp-t720dw",
+    "price_rub": 45375,
+    "source_id": "evidence-price-brother-t720-device-price-ru",
+    "observed_at": "2026-08-16",
+    "is_primary": false
   }
 ]
