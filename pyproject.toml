@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "product-decision-engine"
-version = "0.1.0"
-description = "Phase 0 proof-of-value engine for evidence-backed printer TCO decisions"
+version = "0.2.0"
+description = "Evidence-backed printer TCO engine and Phase 1 PostgreSQL data layer"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["psycopg[binary]>=3.2,<4"]
 
 [project.scripts]
 evaluate-phase0 = "product_decision_engine.evaluation.cli:main"
+migrate-phase1 = "product_decision_engine.persistence.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-

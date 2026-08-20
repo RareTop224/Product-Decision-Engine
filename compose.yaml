@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: product_decision_engine
+      POSTGRES_USER: pde
+      POSTGRES_PASSWORD: pde_local_only
+    ports:
+      - "55432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pde -d product_decision_engine"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - pde_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  pde_postgres_data:
