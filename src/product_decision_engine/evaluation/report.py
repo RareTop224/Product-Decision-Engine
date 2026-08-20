@@ -15,6 +15,10 @@ from product_decision_engine.domain.models import (
     VerificationStatus,
 )
 from product_decision_engine.evidence.audit import audit_product
+from product_decision_engine.evaluation.retailer_baskets import (
+    RetailerBasketResult,
+    evaluate_retailer_basket,
+)
 from product_decision_engine.ranking.break_even import find_break_even
 from product_decision_engine.ranking.engine import evaluate_eligibility
 from product_decision_engine.tco.calculator import (
@@ -411,16 +415,20 @@ def build_report(
     scenarios: tuple[UsageScenario, ...],
     retailer_basket_audits: tuple[RetailerBasketAudit, ...] = (),
 ) -> str:
+    scenario_by_id = {scenario.id: scenario for scenario in scenarios}
+    basket_groups: dict[
+        tuple[str, frozenset[str]], list[RetailerBasketAudit]
+    ] = {}
     if retailer_basket_audits:
-        scenario_ids = {scenario.id for scenario in scenarios}
-        basket_pairs = {
-            frozenset(offer.product_id for offer in audit.offers)
-            for audit in retailer_basket_audits
-        }
-        if len(basket_pairs) != 1:
-            raise ValueError("retailer basket report expects one consistent product pair")
-        if any(audit.scenario_id not in scenario_ids for audit in retailer_basket_audits):
-            raise ValueError("retailer basket audit references an unknown scenario")
+        for audit in retailer_basket_audits:
+            if audit.scenario_id not in scenario_by_id:
+                raise ValueError("retailer basket audit references an unknown scenario")
+            product_ids = frozenset(offer.product_id for offer in audit.offers)
+            for product_id in product_ids:
+                catalog.product(product_id)
+            basket_groups.setdefault((audit.scenario_id, product_ids), []).append(
+                audit
+            )
 
     results = tuple(evaluate_scenario(catalog, scenario) for scenario in scenarios)
     price_robustness = tuple(
@@ -461,6 +469,22 @@ def build_report(
     )
     complete_retailer_baskets = tuple(
         audit for audit in retailer_basket_audits if audit.complete
+    )
+    retailer_basket_results: dict[str, RetailerBasketResult] = {
+        audit.id: evaluate_retailer_basket(
+            catalog, scenario_by_id[audit.scenario_id], audit
+        )
+        for audit in complete_retailer_baskets
+    }
+    retailer_basket_purchase_changes = sum(
+        result.purchase_price_winner.product.id
+        != result.decision_engine_winner.product.id
+        for result in retailer_basket_results.values()
+    )
+    retailer_basket_simplified_changes = sum(
+        result.simplified_tco_winner.product.id
+        != result.decision_engine_winner.product.id
+        for result in retailer_basket_results.values()
     )
     savings = tuple(
         result.purchase_price_winner_tco.total_cost_rub
@@ -628,8 +652,17 @@ def build_report(
     ]
     if retailer_basket_audits:
         lines.append(
-            "- Полных синхронных корзин для целевой пары: "
-            f"{len(complete_retailer_baskets)} / {len(retailer_basket_audits)} продавцов"
+            "- Полных синхронных корзин во всех аудитах проверенных пар: "
+            f"{len(complete_retailer_baskets)} / {len(retailer_basket_audits)} проверок"
+        )
+    if retailer_basket_results:
+        lines.extend(
+            [
+                "- Смена победителя относительно цены покупки в полных корзинах: "
+                f"{retailer_basket_purchase_changes} / {len(retailer_basket_results)}",
+                "- Смена победителя полного TCO относительно упрощённого в полных корзинах: "
+                f"{retailer_basket_simplified_changes} / {len(retailer_basket_results)}",
+            ]
         )
     if most_common_winner:
         product = catalog.product(most_common_winner[0])
@@ -714,9 +747,19 @@ def build_report(
                 f"- Ограничение сигнала: полный расчёт меняет результат упрощённого TCO только в {len(simplified_changed)} из {len(complete)} сценариев; 100% смен относительно цены покупки нельзя считать достаточным доказательством специализированного преимущества.",
                 f"- Двумерный тест дал переключение победителя внутри {mixed_profiles_with_switches} из {len(mixed_winner_ids_by_profile)} функциональных профилей; простая смена требований к функциям не считается чувствительностью экономики.",
                 f"- Повторные цены выявили предварительную устойчивость в {robust_recommendations} из {len(ranged_robustness)} сценариев с наблюдаемым диапазоном; это диагностический стресс-тест, а не price feed.",
-                "- Следующий шаг должен разбирать причины концентрации и преимущество полного расчёта над упрощённым TCO; простое добавление похожих моделей или сценариев сигнал не усилит.",
             ]
         )
+        if retailer_basket_results:
+            lines.extend(
+                [
+                    f"- Синхронные цены подтверждают смену относительно цены покупки в {retailer_basket_purchase_changes} из {len(retailer_basket_results)} полных корзин, но полный расчёт меняет упрощённый TCO в {retailer_basket_simplified_changes} из {len(retailer_basket_results)}: рыночный сигнал TCO реален, специализированный вклад starter/maintenance пока слаб.",
+                    "- Следующий фальсифицирующий тест: искать не новые случайные модели, а 2–3 пары у границ переключения между картриджными, лазерными и ёмкостными устройствами; для каждой нужны две полные синхронные корзины и проверка нескольких объёмов. Если победитель снова не зависит от сценария, следует обсуждать NO-GO или более узкое позиционирование сервиса.",
+                ]
+            )
+        else:
+            lines.append(
+                "- Следующий шаг должен разбирать причины концентрации и преимущество полного расчёта над упрощённым TCO; простое добавление похожих моделей или сценариев сигнал не усилит."
+            )
     elif phase0_status == "NO-GO":
         lines.extend(
             [
@@ -733,72 +776,156 @@ def build_report(
         )
 
     if retailer_basket_audits:
-        basket_product_ids = tuple(
-            offer.product_id for offer in retailer_basket_audits[0].offers
-        )
-        basket_products = tuple(catalog.product(product_id) for product_id in basket_product_ids)
         lines.extend(
             [
                 "",
                 "## Проверка синхронных корзин одного продавца",
                 "",
-                "Строгая корзина требует одновременно доступное точное устройство и полный набор "
-                "OEM replacement consumables у одного продавца на одну дату. Статусы «ожидается», "
-                "«в транзите», «недоступно» и неподтверждённый срок не считаются наличием.",
+                "Строгая корзина требует одновременно доступное точное устройство и цены всех "
+                "OEM-расходников, нужных хотя бы одному сравниваемому расчёту в конкретном сценарии, "
+                "у одного продавца на одну дату. Поэтому обслуживание с ресурсом выше объёма "
+                "сценария не делает корзину неполной. Статусы «ожидается», «в транзите», "
+                "«недоступно» и неподтверждённый срок не считаются наличием.",
                 "",
-                "| Продавец | Дата | "
-                + " | ".join(_product_name(product) for product in basket_products)
-                + " | Полная парная корзина |",
-                "|---|---|" + "---|" * len(basket_products) + "---|",
+                f"Итог по всем проверкам: полных одновременно покупаемых корзин — **{len(complete_retailer_baskets)} из {len(retailer_basket_audits)}**.",
             ]
         )
-        for audit in retailer_basket_audits:
-            offers_by_product = {offer.product_id: offer for offer in audit.offers}
-            cells: list[str] = []
-            for product_id in basket_product_ids:
-                offer = offers_by_product[product_id]
-                device_price = (
-                    f", {_money(offer.device_price_rub)}"
-                    if offer.device_price_rub is not None
-                    else ""
-                )
-                cells.append(
-                    f"устройство: {_availability_label(offer.device_availability)}{device_price}; "
-                    f"OEM: {len(offer.covered_consumable_ids)}/{len(offer.required_consumable_ids)}"
-                )
-            lines.append(
-                f"| {audit.retailer} | {audit.observed_at} | "
-                + " | ".join(cells)
-                + f" | {'да' if audit.complete else 'нет'} |"
+        for (scenario_id, _), group_audits in basket_groups.items():
+            scenario = scenario_by_id[scenario_id]
+            basket_product_ids = tuple(
+                offer.product_id for offer in group_audits[0].offers
             )
-
-        lines.extend(["", "Источники проверки корзин:", ""])
-        for audit in retailer_basket_audits:
-            links: list[str] = []
-            for offer in audit.offers:
-                product = catalog.product(offer.product_id)
-                if offer.device_source_url:
-                    links.append(
-                        f"[{_product_name(product)} — устройство]({offer.device_source_url})"
+            basket_products = tuple(
+                catalog.product(product_id) for product_id in basket_product_ids
+            )
+            group_results = tuple(
+                retailer_basket_results[audit.id]
+                for audit in group_audits
+                if audit.id in retailer_basket_results
+            )
+            lines.extend(
+                [
+                    "",
+                    "### "
+                    + " ↔ ".join(_product_name(product) for product in basket_products),
+                    "",
+                    f"Сценарий: **{scenario.name}** — {scenario.mono_pages_per_month} ч/б + "
+                    f"{scenario.color_pages_per_month} цветных стр./мес., {scenario.ownership_months} мес.",
+                    "",
+                    "| Продавец | Дата | "
+                    + " | ".join(_product_name(product) for product in basket_products)
+                    + " | Полная парная корзина |",
+                    "|---|---|" + "---|" * len(basket_products) + "---|",
+                ]
+            )
+            for audit in group_audits:
+                offers_by_product = {
+                    offer.product_id: offer for offer in audit.offers
+                }
+                cells: list[str] = []
+                for product_id in basket_product_ids:
+                    offer = offers_by_product[product_id]
+                    device_price = (
+                        f", {_money(offer.device_price_rub)}"
+                        if offer.device_price_rub is not None
+                        else ""
                     )
-                links.extend(
-                    f"[{consumable_id}]({url})"
-                    for consumable_id, url in offer.consumable_source_urls
+                    priced_count = len(offer.consumable_prices_rub)
+                    cells.append(
+                        f"устройство: {_availability_label(offer.device_availability)}{device_price}; "
+                        f"OEM-карточки: {len(offer.covered_consumable_ids)}/{len(offer.required_consumable_ids)}; "
+                        f"цены: {priced_count}/{len(offer.required_consumable_ids)}"
+                    )
+                lines.append(
+                    f"| {audit.retailer} | {audit.observed_at} | "
+                    + " | ".join(cells)
+                    + f" | {'да' if audit.complete else 'нет'} |"
                 )
-            lines.append(f"- **{audit.retailer}**: " + (", ".join(links) or "нет подтверждённых карточек"))
 
-        lines.extend(
-            [
-                "",
-                f"Итог: полных одновременно покупаемых корзин — **{len(complete_retailer_baskets)} из {len(retailer_basket_audits)}**.",
-            ]
-        )
-        if not complete_retailer_baskets:
-            lines.append(
-                "Basket-aware TCO не рассчитан: любой числовой результат потребовал бы смешать "
-                "магазины либо использовать недоступное устройство. Ценовая устойчивость этой "
-                "пары остаётся неподтверждённой."
-            )
+            if group_results:
+                lines.extend(
+                    [
+                        "",
+                        "Basket-aware TCO:",
+                        "",
+                        "| Продавец | Модель | Покупка | Расходники | Обслуживание | Полный TCO | Куплено за период |",
+                        "|---|---|---:|---:|---:|---:|---|",
+                    ]
+                )
+                for result in group_results:
+                    for product_result in result.products:
+                        tco = product_result.full_tco
+                        purchased = "; ".join(
+                            f"{component.units_purchased} × `{component.consumable_id}`"
+                            for component in tco.components
+                            if component.units_purchased > 0
+                        ) or "ничего сверх starter"
+                        lines.append(
+                            f"| {result.audit.retailer} | {_product_name(product_result.product)} | "
+                            f"{_money(tco.purchase_cost_rub)} | {_money(tco.consumables_cost_rub)} | "
+                            f"{_money(tco.maintenance_cost_rub)} | {_money(tco.total_cost_rub)} | {purchased} |"
+                        )
+
+                lines.extend(
+                    [
+                        "",
+                        "| Продавец | Самая низкая цена покупки | Победитель упрощённого TCO | Победитель полного TCO | Экономия против выбора по цене |",
+                        "|---|---|---|---|---:|",
+                    ]
+                )
+                for result in group_results:
+                    purchase = result.purchase_price_winner
+                    simplified = result.simplified_tco_winner
+                    decision = result.decision_engine_winner
+                    purchase_full_tco = purchase.full_tco.total_cost_rub
+                    savings_rub = purchase_full_tco - decision.full_tco.total_cost_rub
+                    lines.append(
+                        f"| {result.audit.retailer} | {_product_name(purchase.product)} — "
+                        f"{_money(purchase.full_tco.purchase_cost_rub)} | "
+                        f"{_product_name(simplified.product)} — {_money(simplified.simplified_tco.total_cost_rub)} | "
+                        f"{_product_name(decision.product)} — {_money(decision.full_tco.total_cost_rub)} | "
+                        f"{_money(savings_rub)} ({_percent(savings_rub, purchase_full_tco)}) |"
+                    )
+                distinct_winners = {
+                    result.decision_engine_winner.product.id
+                    for result in group_results
+                }
+                lines.extend(
+                    [
+                        "",
+                        f"Вывод по паре: полный TCO рассчитан без смешивания магазинов у "
+                        f"**{len(group_results)} продавцов**; число разных победителей — "
+                        f"**{len(distinct_winners)}**. Совпадение результата у разных продавцов "
+                        "снижает риск того, что рекомендация вызвана одной случайной ценой.",
+                    ]
+                )
+            else:
+                lines.extend(
+                    [
+                        "",
+                        "Basket-aware TCO не рассчитан: любой числовой результат потребовал бы "
+                        "смешать магазины либо использовать недоступное устройство. Ценовая "
+                        "устойчивость этой пары остаётся неподтверждённой.",
+                    ]
+                )
+
+            lines.extend(["", "Источники проверки корзин:", ""])
+            for audit in group_audits:
+                links: list[str] = []
+                for offer in audit.offers:
+                    product = catalog.product(offer.product_id)
+                    if offer.device_source_url:
+                        links.append(
+                            f"[{_product_name(product)} — устройство]({offer.device_source_url})"
+                        )
+                    links.extend(
+                        f"[{consumable_id}]({url})"
+                        for consumable_id, url in offer.consumable_source_urls
+                    )
+                lines.append(
+                    f"- **{audit.retailer}**: "
+                    + (", ".join(links) or "нет подтверждённых карточек")
+                )
 
     lines.extend(["", "## Ablation полного TCO", ""])
     if not simplified_changed:

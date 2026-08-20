@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Mapping
 
 from product_decision_engine.domain.catalog import Catalog, MissingCriticalData
 from product_decision_engine.domain.models import (
@@ -58,6 +59,7 @@ def _validate_evidence(
     catalog: Catalog,
     product_id: str,
     links: tuple[ProductConsumable, ...],
+    price_overrides_rub: Mapping[tuple[str, str], int],
 ) -> None:
     for field_name in (
         "product_type",
@@ -74,16 +76,36 @@ def _validate_evidence(
             "product", product_id, "recommended_monthly_volume"
         )
 
-    product_price = catalog.latest_price("product", product_id)
-    catalog.require_verified_evidence("price_observation", product_price.id, "price_rub")
+    if ("product", product_id) not in price_overrides_rub:
+        product_price = catalog.latest_price("product", product_id)
+        catalog.require_verified_evidence(
+            "price_observation", product_price.id, "price_rub"
+        )
 
     for link in links:
         catalog.require_verified_evidence("product_consumable", link.id, "configuration")
         consumable = catalog.consumable(link.consumable_id)
         catalog.require_verified_evidence("consumable", consumable.id, "yield_value")
-        if link.role != ProductConsumableRole.STARTER:
+        if (
+            link.role != ProductConsumableRole.STARTER
+            and ("consumable", consumable.id) not in price_overrides_rub
+        ):
             price = catalog.latest_price("consumable", consumable.id)
             catalog.require_verified_evidence("price_observation", price.id, "price_rub")
+
+
+def _price_rub(
+    catalog: Catalog,
+    entity_type: str,
+    entity_id: str,
+    price_overrides_rub: Mapping[tuple[str, str], int],
+) -> int:
+    price = price_overrides_rub.get((entity_type, entity_id))
+    if price is None:
+        return catalog.latest_price(entity_type, entity_id).price_rub
+    if price < 0:
+        raise ValueError("price override must not be negative")
+    return price
 
 
 def calculate_tco(
@@ -92,7 +114,9 @@ def calculate_tco(
     scenario: UsageScenario,
     *,
     require_verified_evidence: bool = True,
+    price_overrides_rub: Mapping[tuple[str, str], int] | None = None,
 ) -> TcoBreakdown:
+    price_overrides = price_overrides_rub or {}
     product = catalog.product(product_id)
     issues = catalog.data_issues(product, scenario)
     if issues:
@@ -100,9 +124,9 @@ def calculate_tco(
 
     all_links = catalog.links(product.id)
     if require_verified_evidence:
-        _validate_evidence(catalog, product.id, all_links)
+        _validate_evidence(catalog, product.id, all_links, price_overrides)
 
-    product_price = catalog.latest_price("product", product.id).price_rub
+    product_price = _price_rub(catalog, "product", product.id, price_overrides)
     starter_links = catalog.links(product.id, ProductConsumableRole.STARTER)
     replacement_links = catalog.links(product.id, ProductConsumableRole.REPLACEMENT)
     maintenance_links = catalog.links(product.id, ProductConsumableRole.MAINTENANCE)
@@ -119,7 +143,9 @@ def calculate_tco(
         )
         unit_capacity = consumable.yield_value * replacement.quantity_in_box
         units = _ceil_div(demand - starter_capacity, unit_capacity)
-        unit_price = catalog.latest_price("consumable", consumable.id).price_rub
+        unit_price = _price_rub(
+            catalog, "consumable", consumable.id, price_overrides
+        )
         components.append(
             ComponentCost(
                 channel=replacement.channel,
@@ -141,7 +167,9 @@ def calculate_tco(
         installed_capacity = maintenance.installed_yield_value or consumable.yield_value
         package_capacity = consumable.yield_value * maintenance.quantity_in_box
         units = _ceil_div(demand - installed_capacity, package_capacity)
-        unit_price = catalog.latest_price("consumable", consumable.id).price_rub
+        unit_price = _price_rub(
+            catalog, "consumable", consumable.id, price_overrides
+        )
         components.append(
             ComponentCost(
                 channel=maintenance.channel,
@@ -184,8 +212,10 @@ def calculate_simplified_tco(
     scenario: UsageScenario,
     *,
     require_verified_evidence: bool = True,
+    price_overrides_rub: Mapping[tuple[str, str], int] | None = None,
 ) -> TcoBreakdown:
     """Baseline B: device plus replacement consumables, ignoring starter/maintenance."""
+    price_overrides = price_overrides_rub or {}
     product = catalog.product(product_id)
     issues = catalog.data_issues(product, scenario)
     if issues:
@@ -193,16 +223,20 @@ def calculate_simplified_tco(
 
     replacement_links = catalog.links(product.id, ProductConsumableRole.REPLACEMENT)
     if require_verified_evidence:
-        _validate_evidence(catalog, product.id, catalog.links(product.id))
+        _validate_evidence(
+            catalog, product.id, catalog.links(product.id), price_overrides
+        )
 
-    purchase_cost = catalog.latest_price("product", product.id).price_rub
+    purchase_cost = _price_rub(catalog, "product", product.id, price_overrides)
     components: list[ComponentCost] = []
     for replacement in replacement_links:
         consumable = catalog.consumable(replacement.consumable_id)
         demand = _demand_for_link(replacement, scenario)
         capacity = consumable.yield_value * replacement.quantity_in_box
         units = _ceil_div(demand, capacity)
-        unit_price = catalog.latest_price("consumable", consumable.id).price_rub
+        unit_price = _price_rub(
+            catalog, "consumable", consumable.id, price_overrides
+        )
         components.append(
             ComponentCost(
                 channel=replacement.channel,

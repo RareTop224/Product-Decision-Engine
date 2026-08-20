@@ -152,5 +152,117 @@
         "notes": "Устройство добавляется в корзину, но сроки выдачи требуют уточнения; полный набор оригинальных Epson 101 у того же продавца не подтверждён."
       }
     ]
+  },
+  {
+    "id": "home-light-pair-kns-20260820",
+    "retailer": "KNS",
+    "observed_at": "2026-08-20",
+    "source_type": "retailer",
+    "verification_status": "verified",
+    "scenario_id": "home-light-color",
+    "offers": [
+      {
+        "product_id": "canon-pixma-ts3640",
+        "device_availability": "in_stock",
+        "device_price_rub": 7276,
+        "device_source_url": "https://www.kns.ru/product/mfu-canon-pixma-ts3640/",
+        "required_consumable_ids": [
+          "canon-pg-445",
+          "canon-cl-446"
+        ],
+        "covered_consumable_ids": [
+          "canon-pg-445",
+          "canon-cl-446"
+        ],
+        "consumable_source_urls": {
+          "canon-pg-445": "https://www.kns.ru/product/kartridzh-canon-pg-445/",
+          "canon-cl-446": "https://www.kns.ru/product/kartridzh-canon-cl-446/"
+        },
+        "consumable_prices_rub": {
+          "canon-pg-445": 1700,
+          "canon-cl-446": 1669
+        },
+        "notes": "Устройство и оба OEM-картриджа отмечены как находящиеся в наличии. Требуемый набор рассчитан для сценария home-light-color."
+      },
+      {
+        "product_id": "hp-deskjet-ink-advantage-2875",
+        "device_availability": "in_stock",
+        "device_price_rub": 7747,
+        "device_source_url": "https://www.kns.ru/product/mfu-hp-deskjet-ink-advantage-2875/",
+        "required_consumable_ids": [
+          "hp-653-black",
+          "hp-653-tricolor"
+        ],
+        "covered_consumable_ids": [
+          "hp-653-black",
+          "hp-653-tricolor"
+        ],
+        "consumable_source_urls": {
+          "hp-653-black": "https://www.kns.ru/product/kartridzh-hp-653-3ym75ae/",
+          "hp-653-tricolor": "https://www.kns.ru/product/kartridzh-hp-653-tri-color-3ym74ae/"
+        },
+        "consumable_prices_rub": {
+          "hp-653-black": 2147,
+          "hp-653-tricolor": 1628
+        },
+        "notes": "Устройство и оба OEM-картриджа отмечены как находящиеся в наличии. Требуемый набор рассчитан для сценария home-light-color."
+      }
+    ]
+  },
+  {
+    "id": "home-light-pair-regard-20260820",
+    "retailer": "Regard",
+    "observed_at": "2026-08-20",
+    "source_type": "retailer",
+    "verification_status": "verified",
+    "scenario_id": "home-light-color",
+    "offers": [
+      {
+        "product_id": "canon-pixma-ts3640",
+        "device_availability": "in_stock",
+        "device_price_rub": 7530,
+        "device_source_url": "https://www.regard.ru/product/730665/mfu-canon-pixma-ts3640-6670c007",
+        "required_consumable_ids": [
+          "canon-pg-445",
+          "canon-cl-446"
+        ],
+        "covered_consumable_ids": [
+          "canon-pg-445",
+          "canon-cl-446"
+        ],
+        "consumable_source_urls": {
+          "canon-pg-445": "https://www.regard.ru/product/150582/kartridz-canon-pg-445-black",
+          "canon-cl-446": "https://www.regard.ru/product/149083/kartridz-canon-cl-446-color"
+        },
+        "consumable_prices_rub": {
+          "canon-pg-445": 1990,
+          "canon-cl-446": 1960
+        },
+        "notes": "Устройство и оба OEM-картриджа отмечены как находящиеся в наличии. Требуемый набор рассчитан для сценария home-light-color."
+      },
+      {
+        "product_id": "hp-deskjet-ink-advantage-2875",
+        "device_availability": "in_stock",
+        "device_price_rub": 8200,
+        "device_source_url": "https://www.regard.ru/product/698477/mfu-hp-deskjet-ink-advantage-2875-60k47c",
+        "required_consumable_ids": [
+          "hp-653-black",
+          "hp-653-tricolor"
+        ],
+        "covered_consumable_ids": [
+          "hp-653-black",
+          "hp-653-tricolor"
+        ],
+        "consumable_source_urls": {
+          "hp-653-black": "https://www.regard.ru/product/360433/kartridz-hp-3ym75ae-653-black",
+          "hp-653-tricolor": "https://www.regard.ru/product/360434/kartridz-hp-3ym74ae-653-color"
+        },
+        "consumable_prices_rub": {
+          "hp-653-black": 2400,
+          "hp-653-tricolor": 2020
+        },
+        "notes": "Устройство и оба OEM-картриджа отмечены как находящиеся в наличии. Требуемый набор рассчитан для сценария home-light-color."
+      }
+    ]
   }
 ]

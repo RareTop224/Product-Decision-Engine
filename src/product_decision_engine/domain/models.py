@@ -163,11 +163,14 @@ class RetailerProductCoverage:
     required_consumable_ids: tuple[str, ...]
     covered_consumable_ids: tuple[str, ...]
     consumable_source_urls: tuple[tuple[str, str], ...]
+    consumable_prices_rub: tuple[tuple[str, int], ...]
     notes: str | None = None
 
     def __post_init__(self) -> None:
         if self.device_price_rub is not None and self.device_price_rub < 0:
             raise ValueError("device_price_rub must not be negative")
+        if self.device_source_url is not None and not self.device_source_url.strip():
+            raise ValueError("device_source_url must not be blank")
         if len(set(self.required_consumable_ids)) != len(self.required_consumable_ids):
             raise ValueError("required_consumable_ids must be unique")
         if len(set(self.covered_consumable_ids)) != len(self.covered_consumable_ids):
@@ -178,18 +181,43 @@ class RetailerProductCoverage:
                 "covered consumables must be required: " + ", ".join(sorted(unknown))
             )
         sourced = {consumable_id for consumable_id, _ in self.consumable_source_urls}
+        if len(sourced) != len(self.consumable_source_urls):
+            raise ValueError("consumable_source_urls ids must be unique")
+        if any(not source_url.strip() for _, source_url in self.consumable_source_urls):
+            raise ValueError("consumable source URLs must not be blank")
         if sourced != set(self.covered_consumable_ids):
             raise ValueError("every covered consumable must have exactly one source URL")
+        priced = {consumable_id for consumable_id, _ in self.consumable_prices_rub}
+        if len(priced) != len(self.consumable_prices_rub):
+            raise ValueError("consumable_prices_rub ids must be unique")
+        unknown_prices = priced - set(self.covered_consumable_ids)
+        if unknown_prices:
+            raise ValueError(
+                "priced consumables must be covered: "
+                + ", ".join(sorted(unknown_prices))
+            )
+        if any(price_rub < 0 for _, price_rub in self.consumable_prices_rub):
+            raise ValueError("consumable prices must not be negative")
+
+    @property
+    def consumables_covered(self) -> bool:
+        return set(self.covered_consumable_ids) == set(self.required_consumable_ids)
 
     @property
     def consumables_complete(self) -> bool:
-        return set(self.covered_consumable_ids) == set(self.required_consumable_ids)
+        priced = {consumable_id for consumable_id, _ in self.consumable_prices_rub}
+        return self.consumables_covered and priced == set(self.required_consumable_ids)
+
+    @property
+    def consumable_price_map(self) -> dict[str, int]:
+        return dict(self.consumable_prices_rub)
 
     @property
     def complete(self) -> bool:
         return (
             self.device_availability == OfferAvailability.IN_STOCK
             and self.device_price_rub is not None
+            and self.device_source_url is not None
             and self.consumables_complete
         )
 
@@ -213,7 +241,10 @@ class RetailerBasketAudit:
 
     @property
     def complete(self) -> bool:
-        return all(offer.complete for offer in self.offers)
+        return (
+            self.verification_status == VerificationStatus.VERIFIED
+            and all(offer.complete for offer in self.offers)
+        )
 
 
 @dataclass(frozen=True, slots=True)

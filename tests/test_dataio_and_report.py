@@ -19,6 +19,9 @@ from product_decision_engine.evaluation.report import (
     evaluate_price_robustness,
     evaluate_scenario,
 )
+from product_decision_engine.evaluation.retailer_baskets import (
+    evaluate_retailer_basket,
+)
 from product_decision_engine.tco import calculate_tco
 
 from helpers import make_mono_catalog, merge_catalogs
@@ -87,11 +90,109 @@ class DataAndReportTests(unittest.TestCase):
         xerox_b230_conflict = audit_product(catalog, catalog.product("xerox-b230"))
         self.assertEqual(len(xerox_b230_conflict.conflicts), 1)
         self.assertEqual(len(scenarios), 15)
-        self.assertEqual(len(basket_audits), 3)
-        self.assertTrue(all(not audit.complete for audit in basket_audits))
-        kns_audit = next(audit for audit in basket_audits if audit.retailer == "KNS")
-        self.assertTrue(all(offer.consumables_complete for offer in kns_audit.offers))
-        self.assertFalse(kns_audit.complete)
+        self.assertEqual(len(basket_audits), 5)
+        self.assertEqual(sum(audit.complete for audit in basket_audits), 2)
+        teacher_kns_audit = next(
+            audit for audit in basket_audits if audit.id == "teacher-pair-kns-20260820"
+        )
+        self.assertTrue(
+            all(offer.consumables_covered for offer in teacher_kns_audit.offers)
+        )
+        self.assertTrue(
+            all(not offer.consumables_complete for offer in teacher_kns_audit.offers)
+        )
+        self.assertFalse(teacher_kns_audit.complete)
+
+    def test_retailer_baskets_preserve_winner_across_two_sellers(self) -> None:
+        data_dir = PROJECT_ROOT / "data" / "golden"
+        catalog = load_catalog(data_dir)
+        scenario = next(
+            item
+            for item in load_scenarios(data_dir / "scenarios.json")
+            if item.id == "home-light-color"
+        )
+        audits = {
+            audit.retailer: audit
+            for audit in load_retailer_basket_audits(
+                data_dir / "retailer_basket_audits.json"
+            )
+            if audit.scenario_id == scenario.id
+        }
+
+        expected = {
+            "KNS": (39_483, 29_807, 31_954, 9_676),
+            "Regard": (45_250, 33_460, 35_860, 11_790),
+        }
+        for retailer, (
+            canon_tco,
+            hp_tco,
+            hp_simplified_tco,
+            savings,
+        ) in expected.items():
+            with self.subTest(retailer=retailer):
+                result = evaluate_retailer_basket(
+                    catalog, scenario, audits[retailer]
+                )
+                self.assertEqual(
+                    result.purchase_price_winner.product.id,
+                    "canon-pixma-ts3640",
+                )
+                self.assertEqual(
+                    result.simplified_tco_winner.product.id,
+                    "hp-deskjet-ink-advantage-2875",
+                )
+                self.assertEqual(
+                    result.decision_engine_winner.product.id,
+                    "hp-deskjet-ink-advantage-2875",
+                )
+                self.assertEqual(
+                    result.product_result("canon-pixma-ts3640").full_tco.total_cost_rub,
+                    canon_tco,
+                )
+                hp = result.product_result("hp-deskjet-ink-advantage-2875")
+                self.assertEqual(hp.full_tco.total_cost_rub, hp_tco)
+                self.assertEqual(
+                    hp.simplified_tco.total_cost_rub, hp_simplified_tco
+                )
+                self.assertEqual(canon_tco - hp_tco, savings)
+                self.assertEqual(
+                    tuple(
+                        (component.consumable_id, component.units_purchased)
+                        for component in hp.full_tco.components
+                    ),
+                    (("hp-653-black", 8), ("hp-653-tricolor", 3)),
+                )
+
+    def test_retailer_basket_rejects_scenario_incomplete_consumable_set(self) -> None:
+        data_dir = PROJECT_ROOT / "data" / "golden"
+        catalog = load_catalog(data_dir)
+        scenario = next(
+            item
+            for item in load_scenarios(data_dir / "scenarios.json")
+            if item.id == "home-light-color"
+        )
+        audit = next(
+            item
+            for item in load_retailer_basket_audits(
+                data_dir / "retailer_basket_audits.json"
+            )
+            if item.id == "home-light-pair-kns-20260820"
+        )
+        canon = audit.offers[0]
+        incomplete_canon = replace(
+            canon,
+            required_consumable_ids=("canon-pg-445",),
+            covered_consumable_ids=("canon-pg-445",),
+            consumable_source_urls=(canon.consumable_source_urls[0],),
+            consumable_prices_rub=(canon.consumable_prices_rub[0],),
+        )
+        misleadingly_complete = replace(
+            audit, offers=(incomplete_canon, audit.offers[1])
+        )
+
+        self.assertTrue(misleadingly_complete.complete)
+        with self.assertRaisesRegex(ValueError, "scenario-specific basket mismatch"):
+            evaluate_retailer_basket(catalog, scenario, misleadingly_complete)
 
     def test_g3411_exact_bundle_uses_two_starter_black_bottles(self) -> None:
         catalog = load_catalog(PROJECT_ROOT / "data" / "golden")
@@ -182,8 +283,23 @@ class DataAndReportTests(unittest.TestCase):
         self.assertIn("0 / 12 точек с диапазоном", report)
         self.assertIn("5 / 12 точек с диапазоном", report)
         self.assertIn("## Проверка синхронных корзин одного продавца", report)
-        self.assertIn("полных одновременно покупаемых корзин — **0 из 3**", report)
+        self.assertIn("полных одновременно покупаемых корзин — **2 из 5**", report)
+        self.assertIn(
+            "Смена победителя относительно цены покупки в полных корзинах: 2 / 2",
+            report,
+        )
+        self.assertIn(
+            "Смена победителя полного TCO относительно упрощённого в полных корзинах: 0 / 2",
+            report,
+        )
         self.assertIn("Basket-aware TCO не рассчитан", report)
+        self.assertIn("Canon PIXMA TS3640 ↔ HP DeskJet Ink Advantage 2875", report)
+        self.assertIn("HP DeskJet Ink Advantage 2875 — 29 807 ₽", report)
+        self.assertIn("HP DeskJet Ink Advantage 2875 — 33 460 ₽", report)
+        self.assertIn("9 676 ₽ (24,5%)", report)
+        self.assertIn("11 790 ₽ (26,1%)", report)
+        self.assertIn("полный TCO рассчитан без смешивания магазинов", report)
+        self.assertIn("Следующий фальсифицирующий тест", report)
         self.assertIn("## Ablation полного TCO", report)
         self.assertIn("Упрощённый baseline даёт **Epson EcoTank L4260** преимущество 3 209 ₽", report)
         self.assertIn("уменьшает обязательные покупки на 3 670 ₽ больше", report)

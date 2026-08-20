@@ -146,6 +146,9 @@ def load_retailer_basket_audits(path: Path) -> tuple[RetailerBasketAudit, ...]:
                         "consumable_source_urls": tuple(
                             offer["consumable_source_urls"].items()
                         ),
+                        "consumable_prices_rub": tuple(
+                            offer.get("consumable_prices_rub", {}).items()
+                        ),
                     }
                 )
                 for offer in item["offers"]
