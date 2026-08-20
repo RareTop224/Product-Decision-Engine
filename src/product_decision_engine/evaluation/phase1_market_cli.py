@@ -23,11 +23,16 @@ def main() -> None:
         "r", encoding="utf-8"
     ) as stream:
         snapshot = json.load(stream)
+    with (phase1_dir / "provider_source_audit_2026-08-21.json").open(
+        "r", encoding="utf-8"
+    ) as stream:
+        provider_audit = json.load(stream)
     report = build_phase1_market_report(
         load_catalog(golden_dir),
         load_scenarios(golden_dir / "scenarios.json"),
         cohort,
         snapshot,
+        provider_audit,
         load_retailer_basket_audits(golden_dir / "retailer_basket_audits.json"),
         load_retailer_basket_audits(
             phase1_dir / "price_ru_basket_audits.json"

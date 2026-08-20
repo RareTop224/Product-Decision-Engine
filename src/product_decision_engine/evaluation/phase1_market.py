@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,95 @@ from product_decision_engine.market import (
     audit_market_eligibility,
     availability_from_retailer_audits,
 )
+
+
+PROVIDER_GATE_STATUSES = frozenset({"pass", "fail", "unknown"})
+
+
+@dataclass(frozen=True)
+class ProviderReadinessSummary:
+    provider_key: str
+    display_name: str
+    passed_gates: int
+    required_gates: int
+    production_ready: bool
+
+
+def analyze_provider_source_audit(
+    provider_audit: dict[str, Any],
+    cohort_ids: tuple[str, ...],
+) -> tuple[ProviderReadinessSummary, ...]:
+    if provider_audit["cohort_size"] != len(cohort_ids):
+        raise ValueError("Provider audit cohort size does not match the cohort")
+    if provider_audit["counts_toward_m3_snapshot"]:
+        raise ValueError("Source feasibility audit must not impersonate an M3 snapshot")
+
+    required_gates = tuple(provider_audit["required_readiness_gates"])
+    if not required_gates or len(set(required_gates)) != len(required_gates):
+        raise ValueError("Provider readiness gates must be non-empty and unique")
+
+    summaries: list[ProviderReadinessSummary] = []
+    provider_keys: set[str] = set()
+    for provider in provider_audit["providers"]:
+        provider_key = provider["provider_key"]
+        if provider_key in provider_keys:
+            raise ValueError(f"Duplicate provider key: {provider_key}")
+        provider_keys.add(provider_key)
+
+        gates = provider["readiness_gates"]
+        if set(gates) != set(required_gates):
+            raise ValueError(
+                f"Provider {provider_key} must declare every readiness gate"
+            )
+        invalid_statuses = set(gates.values()) - PROVIDER_GATE_STATUSES
+        if invalid_statuses:
+            raise ValueError(
+                f"Provider {provider_key} has invalid gate statuses: "
+                f"{sorted(invalid_statuses)}"
+            )
+
+        coverage = provider.get("cohort_coverage")
+        if coverage is not None:
+            device_rows = coverage["exact_device_rows"]
+            matched = set(device_rows["matched_product_ids"])
+            not_matched = set(device_rows["not_matched_product_ids"])
+            if matched & not_matched or matched | not_matched != set(cohort_ids):
+                raise ValueError(
+                    f"Provider {provider_key} device coverage must partition the cohort"
+                )
+            live_ids = {
+                item["product_id"]
+                for item in provider.get("live_product_page_checks", [])
+            }
+            if live_ids and live_ids != set(cohort_ids):
+                raise ValueError(
+                    f"Provider {provider_key} live page checks must cover the cohort"
+                )
+            consumables = coverage["exact_oem_consumables"]
+            if consumables["exact_parts_matched"] > consumables[
+                "required_parts_tested"
+            ]:
+                raise ValueError(
+                    f"Provider {provider_key} matched more OEM parts than tested"
+                )
+            if consumables["complete_product_sets"] > len(cohort_ids):
+                raise ValueError(
+                    f"Provider {provider_key} has too many complete OEM sets"
+                )
+        passed = sum(value == "pass" for value in gates.values())
+        summaries.append(
+            ProviderReadinessSummary(
+                provider_key=provider_key,
+                display_name=provider["display_name"],
+                passed_gates=passed,
+                required_gates=len(required_gates),
+                production_ready=passed == len(required_gates),
+            )
+        )
+
+    if not summaries:
+        raise ValueError("Provider source audit must contain at least one provider")
+    return tuple(summaries)
 
 
 def _read_json(path: Path) -> Any:
@@ -86,6 +176,7 @@ def build_phase1_market_report(
     scenarios: tuple[UsageScenario, ...],
     cohort: list[dict[str, Any]],
     snapshot: dict[str, Any],
+    provider_audit: dict[str, Any],
     golden_audits: tuple[RetailerBasketAudit, ...],
     price_ru_audits: tuple[RetailerBasketAudit, ...],
 ) -> str:
@@ -96,6 +187,9 @@ def build_phase1_market_report(
         raise ValueError("Phase 1 cohort product ids must be unique")
     for product_id in cohort_ids:
         catalog.product(product_id)
+    provider_summaries = analyze_provider_source_audit(
+        provider_audit, cohort_ids
+    )
 
     as_of = date.fromisoformat(snapshot["observed_at"])
     policy = FreshnessPolicy()
@@ -262,13 +356,92 @@ def build_phase1_market_report(
             "- Минимум карточки расходника нельзя брать автоматически: в одной карточке "
             "могут смешиваться OEM и совместимые предложения.",
             "",
+            "## Проверка специализированных российских источников",
+            "",
+            f"Дата проверки: **{provider_audit['observed_at']}**. Это расширение "
+            "источников **не считается вторым M3-срезом**: между проверками прошёл "
+            "только один день, а контракт требует общий интервал не менее 14 дней.",
+            "",
+            "Production-ready означает прохождение всех семи обязательных гейтов без "
+            "взвешенного или магического score: структурированный доступ, exact product, "
+            "exact OEM, цена в RUB, наличие, стабильный идентификатор и подтверждённые "
+            "права коммерческой автоматизации.",
+            "",
+            "| Источник | Пройдено гейтов | Production-ready | Проверенная роль |",
+            "|---|---:|---:|---|",
+        ]
+    )
+    provider_by_key = {
+        item["provider_key"]: item for item in provider_audit["providers"]
+    }
+    for summary in provider_summaries:
+        provider = provider_by_key[summary.provider_key]
+        lines.append(
+            f"| {summary.display_name} | {summary.passed_gates} / "
+            f"{summary.required_gates} | "
+            f"{'да' if summary.production_ready else 'нет'} | "
+            f"`{provider['tested_role']}` |"
+        )
+
+    kns = provider_by_key["kns"]
+    kns_coverage = kns["cohort_coverage"]
+    kns_device_matches = len(
+        kns_coverage["exact_device_rows"]["matched_product_ids"]
+    )
+    kns_consumables = kns_coverage["exact_oem_consumables"]
+    conflict = provider_audit["cross_source_conflicts"][0]
+    lines.extend(
+        [
+            "",
+            "### Что дал KNS",
+            "",
+            f"Официальный XLS-прайс KNS от **{kns['official_price_list']['created_at']}** "
+            f"содержит **{kns['official_price_list']['row_count']} строк**. Exact device "
+            f"найден для **{kns_device_matches} / {len(cohort_ids)} "
+            f"({_percent(kns_device_matches, len(cohort_ids))})** моделей, а exact OEM "
+            f"расходники — **{kns_consumables['exact_parts_matched']} / "
+            f"{kns_consumables['required_parts_tested']}** обязательных позиций, то есть "
+            f"полные наборы расходников есть для **{kns_consumables['complete_product_sets']} / "
+            f"{len(cohort_ids)}** моделей.",
+            "",
+            "Это заметный прогресс в обнаружении exact SKU, но ещё не полная текущая "
+            "корзина. В файле нет явного наличия, стабильного item id/URL и правила "
+            "пересчёта USD-строк в RUB. Поэтому из одного XLS нельзя честно получить ни "
+            "production-цену, ни допуск модели к рекомендации.",
+            "",
+            "Карточки KNS отдельно подтверждают, что источник умеет давать exact MPN, "
+            "RUB-цену и состояние товара. Однако соединение прайс-листа с карточкой пока "
+            "потребовало бы эвристического поиска по названию — это не принимается как "
+            "устойчивый provider adapter без feed или стабильного ключа.",
+            "",
+            "### Обнаруженный конфликт между источниками",
+            "",
+            f"- **Epson EcoTank L4260**: {conflict['source_a']} "
+            f"{conflict['source_b']} Конфликт оставлен `unresolved`; действие: "
+            f"{conflict['required_action']}",
+            "",
+            "ForOffice полезен как точная ручная карточка: Brother DCP-T520W найден по "
+            "DCPT520WR1, но устройство только под заказ, а из четырёх обязательных OEM-"
+            "флаконов в карточке перечислены три. Принтер-Плоттер.ру полезен как "
+            "независимый lifecycle-сигнал: Canon G1411 прямо помечен архивным, а для "
+            "Epson L4260 предлагается запросить цену. Ни один из этих источников пока не "
+            "дал публичный структурированный feed.",
+            "",
+            "Вывод проверки: **KNS — основной кандидат для следующего due diligence**, "
+            "Price.ru остаётся слоем обнаружения предложений, а профильные магазины — "
+            "проверкой exact SKU, наличия и lifecycle. Ни один источник ещё не получил "
+            "статус production-approved.",
+            "",
             "## Что проверяется дальше",
             "",
-            "1. Получение условий партнёрского XML-фида и полей, достаточных для exact SKU, "
-            "retailer, price и availability.",
-            "2. Добор полных OEM-корзин минимум до 80% когорты или честное сужение когорты.",
-            "3. Ещё два среза в разные дни так, чтобы общий интервал составил не менее 14 дней.",
-            "4. Учёт фактического ручного времени и специальных исключений начиная со "
+            "1. Запросить у KNS dealer/export feed с RUB, availability, stable item id/URL "
+            "и явными условиями коммерческого использования.",
+            "2. Параллельно получить условия партнёрского XML-фида Price.ru и проверить "
+            "exact SKU, seller, price и availability.",
+            "3. Добрать полные OEM-корзины минимум до 80% когорты или честно сузить когорту.",
+            "4. Выполнить ещё два среза в разные дни так, чтобы общий интервал составил "
+            "не менее 14 дней.",
+            "5. Учитывать фактическое ручное время и специальные исключения начиная со "
             "следующего среза; для текущего ретроспективного среза время не выдумывается.",
             "",
             "## Риски",
@@ -280,6 +453,8 @@ def build_phase1_market_report(
             "самый дешёвый и занизить TCO.",
             "- Если официальный feed недоступен на приемлемых условиях, вариант со scraping "
             "публичных страниц не рассматривается как устойчивое production-решение.",
+            "- Конфликт Epson L4260 показывает, что даже предложение агрегатора с именем "
+            "продавца нельзя считать подтверждённым наличием без direct seller URL и exact MPN.",
             "",
         ]
     )

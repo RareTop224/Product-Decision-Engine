@@ -1,0 +1,285 @@
+{
+  "id": "ru-specialized-source-audit-20260821",
+  "observed_at": "2026-08-21",
+  "market": {
+    "country_code": "RU",
+    "locality": "Moscow",
+    "currency": "RUB"
+  },
+  "purpose": "provider_feasibility_enrichment",
+  "counts_toward_m3_snapshot": false,
+  "reason_not_m3_snapshot": "Проверка выполнена на следующий день после первого среза и расширяет набор источников, но не является независимым повторным срезом на требуемом интервале.",
+  "collection_method": "manual_public_page_and_official_price_list_check",
+  "manual_minutes": null,
+  "cohort_size": 12,
+  "required_readiness_gates": [
+    "structured_access",
+    "exact_product_identity",
+    "exact_oem_identity",
+    "rub_price",
+    "availability",
+    "stable_item_identifier",
+    "commercial_automation_rights"
+  ],
+  "providers": [
+    {
+      "provider_key": "price-ru",
+      "display_name": "Price.ru",
+      "source_class": "aggregator",
+      "tested_role": "offer_discovery",
+      "source_urls": [
+        "https://price.ru/",
+        "https://price.ru/user-agreement/",
+        "https://advertising.price.ru/partnerprice/"
+      ],
+      "readiness_gates": {
+        "structured_access": "unknown",
+        "exact_product_identity": "unknown",
+        "exact_oem_identity": "unknown",
+        "rub_price": "pass",
+        "availability": "pass",
+        "stable_item_identifier": "unknown",
+        "commercial_automation_rights": "unknown"
+      },
+      "findings": [
+        "Публичные карточки подходят для ручного обнаружения предложений, но автоматический сбор без разрешения ограничен условиями сервиса.",
+        "Официальный production-кандидат — партнёрский XML-фид; доступ и достаточность его полей ещё не подтверждены.",
+        "Карточка расходника может смешивать OEM и совместимые предложения, поэтому exact manufacturer + part number обязателен."
+      ]
+    },
+    {
+      "provider_key": "kns",
+      "display_name": "KNS",
+      "source_class": "specialized_retailer",
+      "tested_role": "structured_catalog_and_price_candidate",
+      "source_urls": [
+        "https://www.kns.ru/price.html",
+        "https://www.kns.ru/linkpics/news/knscom.zip"
+      ],
+      "official_price_list": {
+        "format": "xls_in_zip",
+        "created_at": "2026-08-20",
+        "sheet_name": "TDSheet",
+        "row_count": 60078,
+        "column_count": 8,
+        "column_headers": [
+          "Номенклатура",
+          "+/-",
+          "Розн",
+          "При заказе через интернет",
+          "М.опт",
+          "Опт",
+          "Клуб",
+          "Валюта"
+        ]
+      },
+      "cohort_coverage": {
+        "exact_device_rows": {
+          "matched_product_ids": [
+            "canon-pixma-ts3640",
+            "hp-deskjet-ink-advantage-2875",
+            "hp-smart-tank-580",
+            "hp-smart-tank-720",
+            "xerox-b225",
+            "pantum-m7100dw",
+            "canon-isensys-mf655cdw",
+            "pantum-cm1100adw"
+          ],
+          "not_matched_product_ids": [
+            "canon-pixma-g1411",
+            "epson-ecotank-l4260",
+            "brother-dcp-t520w",
+            "canon-isensys-lbp122dw"
+          ]
+        },
+        "exact_oem_consumables": {
+          "required_parts_tested": 38,
+          "exact_parts_matched": 38,
+          "complete_product_sets": 12
+        }
+      },
+      "live_product_page_checks": [
+        {
+          "product_id": "canon-pixma-ts3640",
+          "source_url": "https://www.kns.ru/product/mfu-canon-pixma-ts3640/",
+          "mpn": "6670C007",
+          "status": "in_stock",
+          "price_rub": 7276
+        },
+        {
+          "product_id": "hp-deskjet-ink-advantage-2875",
+          "source_url": "https://www.kns.ru/product/mfu-hp-deskjet-ink-advantage-2875/",
+          "mpn": "60K47C",
+          "status": "in_stock",
+          "price_rub": 7747
+        },
+        {
+          "product_id": "canon-pixma-g1411",
+          "source_url": "https://www.kns.ru/product/printer-canon-pixma-g1411/",
+          "mpn": "2314C025",
+          "status": "unavailable_over_60_days",
+          "last_price_rub": 16261
+        },
+        {
+          "product_id": "hp-smart-tank-580",
+          "source_url": "https://www.kns.ru/product/mfu-hp-smart-tank-580-1f3y2a/",
+          "mpn": "1F3Y2A",
+          "status": "in_stock",
+          "price_rub": 13953
+        },
+        {
+          "product_id": "hp-smart-tank-720",
+          "source_url": "https://www.kns.ru/product/mfu-hp-smart-tank-720-6uu46a/",
+          "mpn": "6UU46A",
+          "status": "expected",
+          "price_rub": 32088
+        },
+        {
+          "product_id": "epson-ecotank-l4260",
+          "source_url": "https://www.kns.ru/product/mfu-epson-l4260/",
+          "mpn": "C11CJ63415",
+          "status": "unavailable_over_60_days",
+          "last_price_rub": 39512
+        },
+        {
+          "product_id": "brother-dcp-t520w",
+          "source_url": "https://www.kns.ru/product/mfu-brother-dcp-t520w/",
+          "mpn": "DCPT520WR1",
+          "status": "no_delivery",
+          "last_price_rub": 32051
+        },
+        {
+          "product_id": "canon-isensys-lbp122dw",
+          "source_url": "https://www.kns.ru/product/printer-canon-i-sensys-lbp122dw/",
+          "mpn": "5620C001",
+          "status": "unavailable_over_60_days",
+          "last_price_rub": 31501
+        },
+        {
+          "product_id": "xerox-b225",
+          "source_url": "https://www.kns.ru/product/mfu-xerox-b225dni/",
+          "mpn": "B225DNI",
+          "status": "transit_24_days",
+          "price_rub": 20309
+        },
+        {
+          "product_id": "pantum-m7100dw",
+          "source_url": "https://www.kns.ru/product/mfu-pantum-m7100dw/",
+          "mpn": "M7100DW",
+          "status": "in_stock",
+          "price_rub": 39248
+        },
+        {
+          "product_id": "canon-isensys-mf655cdw",
+          "source_url": "https://www.kns.ru/product/mfu-canon-i-sensys-mf655cdw/",
+          "mpn": "5158C004",
+          "status": "in_stock",
+          "price_rub": 52858
+        },
+        {
+          "product_id": "pantum-cm1100adw",
+          "source_url": "https://www.kns.ru/product/mfu-pantum-cm1100adw/",
+          "mpn": "CM1100ADW",
+          "status": "in_stock",
+          "price_rub": 62745
+        }
+      ],
+      "readiness_gates": {
+        "structured_access": "pass",
+        "exact_product_identity": "pass",
+        "exact_oem_identity": "pass",
+        "rub_price": "fail",
+        "availability": "fail",
+        "stable_item_identifier": "fail",
+        "commercial_automation_rights": "unknown"
+      },
+      "findings": [
+        "Прайс-лист даёт широкое структурированное exact-SKU покрытие и отделяет валюту цены.",
+        "Большинство строк прайс-листа выражено в USD; опубликованное правило пересчёта в RUB в файле не найдено.",
+        "В файле нет явного наличия, стабильного item id и URL карточки товара.",
+        "Совместимые расходники содержат OEM part number в собственном названии, поэтому одного поиска по part number недостаточно: нужен также точный производитель.",
+        "Публичность файла не считается разрешением на коммерческую автоматизацию; условия нужно согласовать отдельно."
+      ]
+    },
+    {
+      "provider_key": "foroffice",
+      "display_name": "ForOffice",
+      "source_class": "specialized_retailer",
+      "tested_role": "manual_price_availability_and_dealer_candidate",
+      "source_urls": [
+        "https://www.foroffice.ru/products/description/172189.html",
+        "https://www.foroffice.ru/dealer/"
+      ],
+      "sample_check": {
+        "product_id": "brother-dcp-t520w",
+        "mpn": "DCPT520WR1",
+        "device_price_rub": 31500,
+        "device_status": "on_order",
+        "required_oem_parts": 4,
+        "listed_in_stock_oem_parts": 3,
+        "complete_basket": false
+      },
+      "readiness_gates": {
+        "structured_access": "fail",
+        "exact_product_identity": "pass",
+        "exact_oem_identity": "pass",
+        "rub_price": "pass",
+        "availability": "pass",
+        "stable_item_identifier": "pass",
+        "commercial_automation_rights": "unknown"
+      },
+      "findings": [
+        "Карточка содержит exact MPN, цену в RUB, статус заказа и отличает оригинальные расходники.",
+        "Для Brother DCP-T520W отсутствует один из четырёх обязательных OEM-флаконов, а устройство доступно только под заказ.",
+        "Публичный структурированный feed/API в этой проверке не найден; дилерская программа требует отдельного контакта."
+      ]
+    },
+    {
+      "provider_key": "printer-plotter",
+      "display_name": "Принтер-Плоттер.ру",
+      "source_class": "specialized_retailer",
+      "tested_role": "manual_lifecycle_and_replacement_candidate",
+      "source_urls": [
+        "https://printer-plotter.ru/arhiv-modelej/canon/pixma-g1411/",
+        "https://printer-plotter.ru/mfu-i-kopiry/strujnye/epson/ecotank-l4260/"
+      ],
+      "sample_checks": [
+        {
+          "product_id": "canon-pixma-g1411",
+          "mpn": "2314C025",
+          "status": "archived"
+        },
+        {
+          "product_id": "epson-ecotank-l4260",
+          "mpn": "C11CJ63415",
+          "status": "request_price"
+        }
+      ],
+      "readiness_gates": {
+        "structured_access": "fail",
+        "exact_product_identity": "pass",
+        "exact_oem_identity": "unknown",
+        "rub_price": "unknown",
+        "availability": "pass",
+        "stable_item_identifier": "pass",
+        "commercial_automation_rights": "unknown"
+      },
+      "findings": [
+        "Профильный каталог полезен как независимый lifecycle-сигнал и источник кандидатов на замену.",
+        "Текущая цена публикуется не для всех моделей; Epson L4260 требует запроса цены.",
+        "Публичный структурированный feed/API в этой проверке не найден."
+      ]
+    }
+  ],
+  "cross_source_conflicts": [
+    {
+      "product_id": "epson-ecotank-l4260",
+      "status": "unresolved",
+      "source_a": "Price.ru 2026-08-20 показывает текущие предложения, включая KNS.",
+      "source_b": "Точная карточка KNS C11CJ63415 2026-08-21 показывает отсутствие более 60 дней и только последнюю цену.",
+      "required_action": "Сопоставлять MPN и прямую ссылку продавца; агрегированное предложение не принимать как наличие до проверки карточки продавца."
+    }
+  ],
+  "decision": "CONTINUE_WITH_KNS_FEED_DUE_DILIGENCE",
+  "decision_notes": "KNS является лучшим найденным структурированным кандидатом, но ни один проверенный источник пока не проходит все обязательные production-гейты. Следующий полезный шаг — выяснить у KNS наличие dealer/export feed с RUB, availability, stable item id/URL и правами коммерческого использования; параллельно Price.ru остаётся слоем обнаружения предложений."
+}
