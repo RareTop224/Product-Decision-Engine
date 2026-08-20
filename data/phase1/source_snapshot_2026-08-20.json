@@ -1,0 +1,172 @@
+{
+  "id": "ru-moscow-price-ru-20260820",
+  "observed_at": "2026-08-20",
+  "market": {
+    "country_code": "RU",
+    "locality": "Moscow",
+    "currency": "RUB"
+  },
+  "collection_method": "manual_public_page_check",
+  "manual_minutes": null,
+  "provider": {
+    "provider_key": "price-ru",
+    "display_name": "Price.ru",
+    "provider_role": "price_and_availability_candidate",
+    "technical_fact_authority": false,
+    "terms_url": "https://price.ru/user-agreement/",
+    "legal_url": "https://price.ru/legal/",
+    "partner_program_url": "https://advertising.price.ru/partnerprice",
+    "automated_public_page_collection": "restricted_without_permission",
+    "authorized_production_path": "partner_application_and_xml_feed"
+  },
+  "device_checks": [
+    {
+      "product_id": "canon-pixma-ts3640",
+      "source_url": "https://price.ru/mfu-printery-kopiry/canon-pixma-ts3640/",
+      "status": "current_offers",
+      "offer_count": 1,
+      "price_min_rub": 7660,
+      "price_max_rub": 7660,
+      "verification_status": "verified",
+      "notes": "Точная карточка 6670C007; предложение Regard."
+    },
+    {
+      "product_id": "hp-deskjet-ink-advantage-2875",
+      "source_url": "https://price.ru/mfu-printery-kopiry/hp-deskjet-ink-advantage-2875/",
+      "status": "current_offers",
+      "offer_count": 2,
+      "price_min_rub": 7470,
+      "price_max_rub": 8130,
+      "verification_status": "verified",
+      "notes": "Точная карточка 60K47C; предложения Regard и Market777."
+    },
+    {
+      "product_id": "canon-pixma-g1411",
+      "source_url": null,
+      "status": "not_verified",
+      "offer_count": null,
+      "price_min_rub": null,
+      "price_max_rub": null,
+      "verification_status": "candidate",
+      "notes": "Точная карточка Price.ru в текущей ручной проверке не подтверждена."
+    },
+    {
+      "product_id": "hp-smart-tank-580",
+      "source_url": "https://price.ru/mfu-printery-kopiry/hp-smart-tank-580/",
+      "status": "current_offers",
+      "offer_count": 5,
+      "price_min_rub": 12030,
+      "price_max_rub": 15622,
+      "verification_status": "verified",
+      "notes": "Точная карточка 1F3Y2A; цены округлены до целых рублей вверх для верхней границы."
+    },
+    {
+      "product_id": "hp-smart-tank-720",
+      "source_url": "https://price.ru/mfu-printery-kopiry/hp-smart-tank-720/",
+      "status": "no_current_offers",
+      "offer_count": 0,
+      "price_min_rub": null,
+      "price_max_rub": null,
+      "verification_status": "verified",
+      "notes": "Карточка существует, но товар закончился; 28 300 ₽ — последняя, не текущая цена."
+    },
+    {
+      "product_id": "epson-ecotank-l4260",
+      "source_url": "https://price.ru/mfu-printery-kopiry/epson-l4260/",
+      "status": "current_offers",
+      "offer_count": 3,
+      "price_min_rub": 32805,
+      "price_max_rub": 63238,
+      "verification_status": "verified",
+      "notes": "Предложения KNS, Ti-store и Regard; дробные цены округлены вверх."
+    },
+    {
+      "product_id": "brother-dcp-t520w",
+      "source_url": null,
+      "status": "not_verified",
+      "offer_count": null,
+      "price_min_rub": null,
+      "price_max_rub": null,
+      "verification_status": "candidate",
+      "notes": "Точная карточка Price.ru в текущей ручной проверке не подтверждена."
+    },
+    {
+      "product_id": "canon-isensys-lbp122dw",
+      "source_url": "https://price.ru/mfu-printery-kopiry/canon-i-sensys-lbp122dw/",
+      "status": "no_current_offers",
+      "offer_count": 0,
+      "price_min_rub": null,
+      "price_max_rub": null,
+      "verification_status": "verified",
+      "notes": "Карточка существует, но 0 продавцов; 22 100 ₽ — последняя цена."
+    },
+    {
+      "product_id": "xerox-b225",
+      "source_url": "https://price.ru/mfu-printery-kopiry/xerox-b225dni/",
+      "status": "current_offers",
+      "offer_count": 2,
+      "price_min_rub": 15362,
+      "price_max_rub": 20790,
+      "verification_status": "verified",
+      "notes": "Карточка B225DNI/B225V_DNI; предложения ForOffice и Артрон."
+    },
+    {
+      "product_id": "pantum-m7100dw",
+      "source_url": "https://price.ru/mfu-printery-kopiry/pantum-m7100dw/",
+      "status": "current_offers",
+      "offer_count": 3,
+      "price_min_rub": 31137,
+      "price_max_rub": 39765,
+      "verification_status": "verified",
+      "notes": "Предложения ionliner, ForOffice и Абрис."
+    },
+    {
+      "product_id": "canon-isensys-mf655cdw",
+      "source_url": null,
+      "status": "not_verified",
+      "offer_count": null,
+      "price_min_rub": null,
+      "price_max_rub": null,
+      "verification_status": "candidate",
+      "notes": "Точная карточка Price.ru в текущей ручной проверке не подтверждена."
+    },
+    {
+      "product_id": "pantum-cm1100adw",
+      "source_url": "https://price.ru/mfu-printery-kopiry/pantum-cm1100adw/",
+      "status": "current_offers",
+      "offer_count": 1,
+      "price_min_rub": 62370,
+      "price_max_rub": 62370,
+      "verification_status": "verified",
+      "notes": "Одно предложение магазина Абрис."
+    }
+  ],
+  "lifecycle_checks": [
+    {
+      "product_id": "hp-smart-tank-720",
+      "lifecycle_status": "unknown",
+      "verification_status": "verified",
+      "source_url": "https://price.ru/mfu-printery-kopiry/hp-smart-tank-720/",
+      "notes": "Отсутствие предложений не интерпретируется как снятие с производства."
+    },
+    {
+      "product_id": "canon-isensys-lbp122dw",
+      "lifecycle_status": "unknown",
+      "verification_status": "verified",
+      "source_url": "https://price.ru/mfu-printery-kopiry/canon-i-sensys-lbp122dw/",
+      "notes": "Отсутствие предложений не интерпретируется как снятие с производства."
+    }
+  ],
+  "quality_findings": [
+    {
+      "code": "exact_oem_filter_required",
+      "source_url": "https://price.ru/kartridzhi-tonery-fotobarabany/canon-8283b001/",
+      "notes": "Минимальная цена карточки Canon PG-445 может относиться к совместимому товару; OEM и точный part number нужно фильтровать до выбора цены."
+    },
+    {
+      "code": "technical_specs_not_authoritative",
+      "source_url": "https://price.ru/mfu-printery-kopiry/pantum-p2500w/",
+      "notes": "Агрегатор используется для цены и наличия; технические факты продолжают проверяться по производителю."
+    }
+  ]
+}

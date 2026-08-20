@@ -11,6 +11,7 @@ dependencies = ["psycopg[binary]>=3.2,<4"]
 
 [project.scripts]
 evaluate-phase0 = "product_decision_engine.evaluation.cli:main"
+evaluate-phase1-market = "product_decision_engine.evaluation.phase1_market_cli:main"
 migrate-phase1 = "product_decision_engine.persistence.cli:main"
 
 [tool.setuptools.packages.find]

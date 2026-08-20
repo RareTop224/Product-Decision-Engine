@@ -1,0 +1,62 @@
+[
+  {
+    "product_id": "canon-pixma-ts3640",
+    "segment": "inkjet_cartridge_mfp",
+    "selection_reason": "Прямая картриджная пара и низкий бюджет покупки."
+  },
+  {
+    "product_id": "hp-deskjet-ink-advantage-2875",
+    "segment": "inkjet_cartridge_mfp",
+    "selection_reason": "Прямой конкурент Canon TS3640 с другими ресурсами картриджей."
+  },
+  {
+    "product_id": "canon-pixma-g1411",
+    "segment": "ink_tank_printer",
+    "selection_reason": "СНПЧ-принтер без функций МФУ; важен для hard constraints."
+  },
+  {
+    "product_id": "hp-smart-tank-580",
+    "segment": "ink_tank_mfp",
+    "selection_reason": "Участвует в подтверждённом break-even с картриджной моделью."
+  },
+  {
+    "product_id": "hp-smart-tank-720",
+    "segment": "ink_tank_mfp_duplex",
+    "selection_reason": "Один из победителей прямой пары с Epson L4260."
+  },
+  {
+    "product_id": "epson-ecotank-l4260",
+    "segment": "ink_tank_mfp_duplex",
+    "selection_reason": "Прямой конкурент HP Smart Tank 720 и отдельный maintenance item."
+  },
+  {
+    "product_id": "brother-dcp-t520w",
+    "segment": "ink_tank_mfp",
+    "selection_reason": "Шестой бренд выборки и альтернативная система OEM-чернил."
+  },
+  {
+    "product_id": "canon-isensys-lbp122dw",
+    "segment": "mono_laser_printer",
+    "selection_reason": "Монохромный лазерный принтер с Wi-Fi и дуплексом."
+  },
+  {
+    "product_id": "xerox-b225",
+    "segment": "mono_laser_mfp",
+    "selection_reason": "Монохромное МФУ с отдельным drum и зафиксированным конфликтом данных."
+  },
+  {
+    "product_id": "pantum-m7100dw",
+    "segment": "mono_laser_mfp",
+    "selection_reason": "Монохромная офисная модель с альтернативной схемой toner + drum."
+  },
+  {
+    "product_id": "canon-isensys-mf655cdw",
+    "segment": "color_laser_mfp",
+    "selection_reason": "Цветное лазерное МФУ и зафиксированный конфликт starter yield."
+  },
+  {
+    "product_id": "pantum-cm1100adw",
+    "segment": "color_laser_mfp",
+    "selection_reason": "Вторая цветная лазерная конфигурация и сравнение другого бренда."
+  }
+]

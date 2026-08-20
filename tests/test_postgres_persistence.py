@@ -48,6 +48,12 @@ class PostgresSchemaTests(unittest.TestCase):
         self.assertIn("unique_product_mpn_idx", identity_migration)
         self.assertIn("WHERE mpn IS NOT NULL", identity_migration)
 
+        freshness_migration = (
+            PROJECT_ROOT / "db" / "migrations" / "003_market_freshness.sql"
+        ).read_text(encoding="utf-8")
+        self.assertIn("pde.product_lifecycle_observations", freshness_migration)
+        self.assertIn("pde.latest_product_lifecycle", freshness_migration)
+
 
 @unittest.skipUnless(
     os.environ.get("PDE_TEST_DATABASE_URL"),

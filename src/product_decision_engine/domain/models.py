@@ -58,6 +58,12 @@ class OfferAvailability(StrEnum):
     UNVERIFIED = "unverified"
 
 
+class ProductLifecycleStatus(StrEnum):
+    ACTIVE = "active"
+    DISCONTINUED = "discontinued"
+    UNKNOWN = "unknown"
+
+
 @dataclass(frozen=True, slots=True)
 class Product:
     id: str
@@ -138,6 +144,29 @@ class PriceObservation:
     def __post_init__(self) -> None:
         if self.price_rub < 0:
             raise ValueError("price_rub must not be negative")
+
+
+@dataclass(frozen=True, slots=True)
+class AvailabilityObservation:
+    id: str
+    product_id: str
+    source_provider_key: str
+    availability: OfferAvailability
+    observed_at: str
+    verification_status: VerificationStatus
+    source_url: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class ProductLifecycleObservation:
+    id: str
+    product_id: str
+    source_provider_key: str
+    lifecycle_status: ProductLifecycleStatus
+    observed_at: str
+    verification_status: VerificationStatus
+    source_url: str | None = None
+    notes: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

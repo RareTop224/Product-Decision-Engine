@@ -1,4 +1,5 @@
 from .models import (
+    AvailabilityObservation,
     ColorMode,
     Consumable,
     ConsumableKind,
@@ -10,6 +11,8 @@ from .models import (
     Product,
     ProductConsumable,
     ProductConsumableRole,
+    ProductLifecycleObservation,
+    ProductLifecycleStatus,
     ProductType,
     RetailerBasketAudit,
     RetailerProductCoverage,
@@ -18,6 +21,7 @@ from .models import (
 )
 
 __all__ = [
+    "AvailabilityObservation",
     "ColorMode",
     "Consumable",
     "ConsumableKind",
@@ -29,6 +33,8 @@ __all__ = [
     "Product",
     "ProductConsumable",
     "ProductConsumableRole",
+    "ProductLifecycleObservation",
+    "ProductLifecycleStatus",
     "ProductType",
     "RetailerBasketAudit",
     "RetailerProductCoverage",
