@@ -732,5 +732,158 @@
     "price_rub": 1100,
     "source_id": "evidence-price-canon-cl-461",
     "observed_at": "2026-08-17"
+  },
+  {
+    "id": "price-pantum-p2500w-device-pantum-store-20260820",
+    "entity_type": "product",
+    "entity_id": "pantum-p2500w",
+    "price_rub": 10490,
+    "source_id": "evidence-price-pantum-p2500w-device-pantum-store-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-pantum-pc211p-ofitrade-20260820",
+    "entity_type": "consumable",
+    "entity_id": "pantum-pc211p",
+    "price_rub": 3300,
+    "source_id": "evidence-price-pantum-pc211p-ofitrade-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-epson-l3250-device-info39-20260820",
+    "entity_type": "product",
+    "entity_id": "epson-ecotank-l3250",
+    "price_rub": 18790,
+    "source_id": "evidence-price-epson-l3250-device-info39-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-epson-103-black-ofsi-20260820",
+    "entity_type": "consumable",
+    "entity_id": "epson-103-black",
+    "price_rub": 1375,
+    "source_id": "evidence-price-epson-103-black-ofsi-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-epson-103-cyan-ofsi-20260820",
+    "entity_type": "consumable",
+    "entity_id": "epson-103-cyan",
+    "price_rub": 1293,
+    "source_id": "evidence-price-epson-103-cyan-ofsi-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-epson-103-magenta-ofsi-20260820",
+    "entity_type": "consumable",
+    "entity_id": "epson-103-magenta",
+    "price_rub": 1293,
+    "source_id": "evidence-price-epson-103-magenta-ofsi-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-epson-103-yellow-ofsi-20260820",
+    "entity_type": "consumable",
+    "entity_id": "epson-103-yellow",
+    "price_rub": 1324,
+    "source_id": "evidence-price-epson-103-yellow-ofsi-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-canon-g1411-device-optima-20260820",
+    "entity_type": "product",
+    "entity_id": "canon-pixma-g1411",
+    "price_rub": 20990,
+    "source_id": "evidence-price-canon-g1411-device-optima-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-canon-gi490-black-kns-20260820",
+    "entity_type": "consumable",
+    "entity_id": "canon-gi-490-black",
+    "price_rub": 845,
+    "source_id": "evidence-price-canon-gi490-black-kns-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-canon-gi490-cyan-kns-20260820",
+    "entity_type": "consumable",
+    "entity_id": "canon-gi-490-cyan",
+    "price_rub": 854,
+    "source_id": "evidence-price-canon-gi490-cyan-kns-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-canon-gi490-magenta-kns-20260820",
+    "entity_type": "consumable",
+    "entity_id": "canon-gi-490-magenta",
+    "price_rub": 828,
+    "source_id": "evidence-price-canon-gi490-magenta-kns-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-canon-gi490-yellow-kns-20260820",
+    "entity_type": "consumable",
+    "entity_id": "canon-gi-490-yellow",
+    "price_rub": 854,
+    "source_id": "evidence-price-canon-gi490-yellow-kns-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-hp-smart-tank-580-device-hp-rus-20260820",
+    "entity_type": "product",
+    "entity_id": "hp-smart-tank-580",
+    "price_rub": 18452,
+    "source_id": "evidence-price-hp-smart-tank-580-device-hp-rus-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-hp-gt53xl-black-kns-20260820",
+    "entity_type": "consumable",
+    "entity_id": "hp-gt53xl-black",
+    "price_rub": 1312,
+    "source_id": "evidence-price-hp-gt53xl-black-kns-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-hp-gt52-cyan-kns-20260820",
+    "entity_type": "consumable",
+    "entity_id": "hp-gt52-cyan",
+    "price_rub": 1182,
+    "source_id": "evidence-price-hp-gt52-cyan-kns-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-hp-gt52-magenta-kns-20260820",
+    "entity_type": "consumable",
+    "entity_id": "hp-gt52-magenta",
+    "price_rub": 1008,
+    "source_id": "evidence-price-hp-gt52-magenta-kns-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
+  },
+  {
+    "id": "price-hp-gt52-yellow-kns-20260820",
+    "entity_type": "consumable",
+    "entity_id": "hp-gt52-yellow",
+    "price_rub": 1176,
+    "source_id": "evidence-price-hp-gt52-yellow-kns-20260820",
+    "observed_at": "2026-08-20",
+    "is_primary": false
   }
 ]

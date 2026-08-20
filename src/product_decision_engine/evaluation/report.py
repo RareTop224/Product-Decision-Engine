@@ -24,6 +24,9 @@ from product_decision_engine.tco.calculator import (
 
 SENSITIVITY_MONO_PAGES_PER_MONTH = (50, 200, 500, 1_000)
 SENSITIVITY_OWNERSHIP_MONTHS = 60
+MIXED_SENSITIVITY_TOTAL_PAGES_PER_MONTH = 750
+MIXED_SENSITIVITY_COLOR_SHARES_PERCENT = (0, 25, 50, 75)
+MIXED_SENSITIVITY_OWNERSHIP_MONTHS = (12, 36, 60)
 
 
 @dataclass(frozen=True, slots=True)
@@ -51,6 +54,30 @@ class PriceRobustness:
     best_challenger_tco_min_rub: int | None
     has_observed_range: bool
     robust: bool
+
+
+@dataclass(frozen=True, slots=True)
+class MixedSensitivityProfile:
+    id: str
+    title: str
+    require_mfp: bool
+    require_wifi: bool
+
+
+MIXED_SENSITIVITY_PROFILES = (
+    MixedSensitivityProfile(
+        id="open",
+        title="Без требований к функциям",
+        require_mfp=False,
+        require_wifi=False,
+    ),
+    MixedSensitivityProfile(
+        id="mfp-wifi",
+        title="Обязательны МФУ и Wi-Fi",
+        require_mfp=True,
+        require_wifi=True,
+    ),
+)
 
 
 def evaluate_scenario(catalog: Catalog, scenario: UsageScenario) -> ScenarioResult:
@@ -215,6 +242,42 @@ def _sensitivity_results(catalog: Catalog) -> tuple[ScenarioResult, ...]:
     )
 
 
+def _mixed_sensitivity_results(
+    catalog: Catalog,
+    profile: MixedSensitivityProfile,
+) -> tuple[tuple[ScenarioResult, ...], ...]:
+    rows: list[tuple[ScenarioResult, ...]] = []
+    for color_share_percent in MIXED_SENSITIVITY_COLOR_SHARES_PERCENT:
+        color_pages = (
+            MIXED_SENSITIVITY_TOTAL_PAGES_PER_MONTH * color_share_percent // 100
+        )
+        mono_pages = MIXED_SENSITIVITY_TOTAL_PAGES_PER_MONTH - color_pages
+        rows.append(
+            tuple(
+                evaluate_scenario(
+                    catalog,
+                    UsageScenario(
+                        id=(
+                            f"sensitivity-mixed-{profile.id}-"
+                            f"{color_share_percent}-{ownership_months}"
+                        ),
+                        name=(
+                            f"{color_share_percent}% цвета, "
+                            f"{ownership_months} месяцев"
+                        ),
+                        mono_pages_per_month=mono_pages,
+                        color_pages_per_month=color_pages,
+                        ownership_months=ownership_months,
+                        require_mfp=profile.require_mfp,
+                        require_wifi=profile.require_wifi,
+                    ),
+                )
+                for ownership_months in MIXED_SENSITIVITY_OWNERSHIP_MONTHS
+            )
+        )
+    return tuple(rows)
+
+
 def _catalog_at_price_bound(catalog: Catalog, *, use_maximum: bool) -> Catalog:
     by_entity: dict[tuple[str, str], list] = {}
     for observation in catalog.prices:
@@ -308,6 +371,21 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
     )
     robust_recommendations = sum(item.robust for item in ranged_robustness)
     sensitivity = _sensitivity_results(catalog)
+    mixed_sensitivity = tuple(
+        (profile, _mixed_sensitivity_results(catalog, profile))
+        for profile in MIXED_SENSITIVITY_PROFILES
+    )
+    mixed_robustness = tuple(
+        (
+            profile,
+            tuple(
+                evaluate_price_robustness(catalog, result)
+                for row in rows
+                for result in row
+            ),
+        )
+        for profile, rows in mixed_sensitivity
+    )
     complete = tuple(result for result in results if result.decision_engine_winner is not None)
     competitive = tuple(result for result in complete if result.candidate_count >= 2)
     changed = tuple(
@@ -382,6 +460,18 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         for result in sensitivity
         if result.decision_engine_winner is not None
     }
+    mixed_winner_ids_by_profile = tuple(
+        (
+            profile,
+            {
+                result.decision_engine_winner.id
+                for row in rows
+                for result in row
+                if result.decision_engine_winner is not None
+            },
+        )
+        for profile, rows in mixed_sensitivity
+    )
     brand_counts = Counter(product.manufacturer for product in catalog.products)
     technology_counts = Counter(product.print_technology for product in catalog.products)
     product_type_counts = Counter(product.product_type.value for product in catalog.products)
@@ -510,6 +600,18 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
     lines.extend(
         [
             f"- Разных победителей в контрольной чувствительности: {len(sensitivity_winner_ids)} / {len(sensitivity)}",
+            *(
+                f"- Разных победителей в матрице «доля цвета × горизонт» ({profile.title.casefold()}): "
+                f"{len(winner_ids)} / "
+                f"{len(MIXED_SENSITIVITY_COLOR_SHARES_PERCENT) * len(MIXED_SENSITIVITY_OWNERSHIP_MONTHS)}"
+                for profile, winner_ids in mixed_winner_ids_by_profile
+            ),
+            *(
+                f"- Ценовая устойчивость той же матрицы ({profile.title.casefold()}): "
+                f"{sum(bool(item and item.robust) for item in robustness)} / "
+                f"{sum(bool(item and item.has_observed_range) for item in robustness)} точек с диапазоном"
+                for profile, robustness in mixed_robustness
+            ),
             "",
             "## Промежуточная интерпретация",
             "",
@@ -533,12 +635,18 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
                 f"- Стресс-тест цен пока разреженный: повторные наблюдения есть только для {repeated_price_entities} из {len(price_entity_counts)} ценовых сущностей, поэтому его результат нельзя считать доказанной рыночной устойчивостью."
             )
     elif phase0_status == "REASSESS":
+        mixed_profiles_with_switches = sum(
+            len(winner_ids) >= 2
+            for _, winner_ids in mixed_winner_ids_by_profile
+        )
         lines.extend(
             [
                 "- Рекомендация процесса: **`REASSESS BEFORE PRODUCT BUILD`** — экономическая ценность видна, но текущая проверка чувствительности не подтверждает достаточно сценарно-зависимый выбор.",
                 f"- Основание: Decision Engine меняет выбор в {len(competitive_changed)} из {len(competitive)} конкурентных сценариев; число разных победителей в {len(sensitivity)} контрольных точках объёма — {len(sensitivity_winner_ids)}.",
                 f"- Ограничение сигнала: полный расчёт меняет результат упрощённого TCO только в {len(simplified_changed)} из {len(complete)} сценариев; 100% смен относительно цены покупки нельзя считать достаточным доказательством специализированного преимущества.",
-                "- Следующий тест должен проверять устойчивость прямых конкурентов по повторным ценам, доле цветной печати и горизонту владения, а не просто увеличивать число похожих моделей.",
+                f"- Двумерный тест дал переключение победителя внутри {mixed_profiles_with_switches} из {len(mixed_winner_ids_by_profile)} функциональных профилей; простая смена требований к функциям не считается чувствительностью экономики.",
+                f"- Повторные цены выявили предварительную устойчивость в {robust_recommendations} из {len(ranged_robustness)} сценариев с наблюдаемым диапазоном; это диагностический стресс-тест, а не price feed.",
+                "- Следующий шаг должен разбирать причины концентрации и преимущество полного расчёта над упрощённым TCO; простое добавление похожих моделей или сценариев сигнал не усилит.",
             ]
         )
     elif phase0_status == "NO-GO":
@@ -652,6 +760,61 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
             f"| {result.scenario.mono_pages_per_month} | {result.candidate_count} | "
             f"{_product_name(winner) if winner else 'нет рекомендации'} | "
             f"{_money(tco.total_cost_rub) if tco else '—'} |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Чувствительность к доле цветной печати и горизонту владения",
+            "",
+            f"Контроль: фиксированные {MIXED_SENSITIVITY_TOTAL_PAGES_PER_MONTH} страниц в месяц. "
+            "Объём достаточно велик для покупок сменных расходников на длинном горизонте, "
+            "но не превышает опубликованный предел HP Smart Tank 580 (800 стр./мес.).",
+        ]
+    )
+    horizon_headers = " | ".join(
+        f"{months // 12} г." for months in MIXED_SENSITIVITY_OWNERSHIP_MONTHS
+    )
+    horizon_alignment = "|".join("---:" for _ in MIXED_SENSITIVITY_OWNERSHIP_MONTHS)
+    mixed_robustness_by_profile_id = {
+        profile.id: robustness for profile, robustness in mixed_robustness
+    }
+    for profile, rows in mixed_sensitivity:
+        lines.extend(
+            [
+                "",
+                f"### {profile.title}",
+                "",
+                f"| Доля цветной печати | {horizon_headers} |",
+                f"|---:|{horizon_alignment}|",
+            ]
+        )
+        for color_share_percent, row in zip(
+            MIXED_SENSITIVITY_COLOR_SHARES_PERCENT,
+            rows,
+            strict=True,
+        ):
+            cells: list[str] = []
+            for result in row:
+                winner = result.decision_engine_winner
+                tco = result.decision_engine_winner_tco
+                cells.append(
+                    f"{_product_name(winner)} — {_money(tco.total_cost_rub)}"
+                    if winner and tco
+                    else "нет рекомендации"
+                )
+            lines.append(f"| {color_share_percent}% | " + " | ".join(cells) + " |")
+        profile_robustness = mixed_robustness_by_profile_id[profile.id]
+        observed_ranges = sum(
+            bool(item and item.has_observed_range) for item in profile_robustness
+        )
+        robust_points = sum(bool(item and item.robust) for item in profile_robustness)
+        lines.extend(
+            [
+                "",
+                f"Ценовой стресс: рекомендация сохраняется во всём наблюдаемом "
+                f"диапазоне в **{robust_points} из {observed_ranges}** точек.",
+            ]
         )
 
     lines.extend(["", "## Break-even", ""])

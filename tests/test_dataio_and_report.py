@@ -30,8 +30,8 @@ class DataAndReportTests(unittest.TestCase):
         scenarios = load_scenarios(data_dir / "scenarios.json")
 
         self.assertEqual(len(catalog.products), 30)
-        self.assertEqual(len(catalog.prices), 91)
-        self.assertEqual(len(catalog.evidence), 531)
+        self.assertEqual(len(catalog.prices), 108)
+        self.assertEqual(len(catalog.evidence), 548)
         self.assertTrue(all(not audit_product(catalog, item).missing for item in catalog.products))
         primary_prices = Counter(
             (item.entity_type, item.entity_id)
@@ -43,6 +43,32 @@ class DataAndReportTests(unittest.TestCase):
         }
         self.assertEqual(set(primary_prices), all_price_entities)
         self.assertTrue(all(count == 1 for count in primary_prices.values()))
+        repeated_price_counts = Counter(
+            (item.entity_type, item.entity_id) for item in catalog.prices
+        )
+        self.assertEqual(sum(count >= 2 for count in repeated_price_counts.values()), 21)
+        price_stress_targets = {
+            ("product", "canon-pixma-g1411"),
+            ("consumable", "canon-gi-490-black"),
+            ("consumable", "canon-gi-490-cyan"),
+            ("consumable", "canon-gi-490-magenta"),
+            ("consumable", "canon-gi-490-yellow"),
+            ("product", "hp-smart-tank-580"),
+            ("consumable", "hp-gt53xl-black"),
+            ("consumable", "hp-gt52-cyan"),
+            ("consumable", "hp-gt52-magenta"),
+            ("consumable", "hp-gt52-yellow"),
+            ("product", "epson-ecotank-l3250"),
+            ("consumable", "epson-103-black"),
+            ("consumable", "epson-103-cyan"),
+            ("consumable", "epson-103-magenta"),
+            ("consumable", "epson-103-yellow"),
+            ("product", "pantum-p2500w"),
+            ("consumable", "pantum-pc211p"),
+        }
+        self.assertTrue(
+            all(repeated_price_counts[target] >= 2 for target in price_stress_targets)
+        )
         conflict_audit = audit_product(
             catalog,
             catalog.product("canon-isensys-mf655cdw"),
@@ -130,6 +156,15 @@ class DataAndReportTests(unittest.TestCase):
         self.assertIn("Концентрация бренда среди победителей", report)
         self.assertIn("Покрытие повторными ценовыми наблюдениями", report)
         self.assertIn("Проверка ценового диапазона", report)
+        self.assertIn("Покрытие повторными ценовыми наблюдениями: 21 / 85", report)
+        self.assertIn("Чувствительность к доле цветной печати и горизонту владения", report)
+        self.assertIn("фиксированные 750 страниц в месяц", report)
+        self.assertIn("1 / 12", report)
+        self.assertIn("переключение победителя внутри 0 из 2", report)
+        self.assertIn("предварительную устойчивость в 4 из 15", report)
+        self.assertIn("Ценовая устойчивость той же матрицы", report)
+        self.assertIn("0 / 12 точек с диапазоном", report)
+        self.assertIn("5 / 12 точек с диапазоном", report)
         self.assertNotIn("Phase 0 evaluation report", report)
 
     def test_price_robustness_detects_observed_winner_flip(self) -> None:
