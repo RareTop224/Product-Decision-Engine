@@ -264,5 +264,133 @@
         "notes": "Устройство и оба OEM-картриджа отмечены как находящиеся в наличии. Требуемый набор рассчитан для сценария home-light-color."
       }
     ]
+  },
+  {
+    "id": "home-light-cartridge-tank-kns-20260820",
+    "retailer": "KNS",
+    "observed_at": "2026-08-20",
+    "source_type": "retailer",
+    "verification_status": "verified",
+    "scenario_id": "home-light-color",
+    "offers": [
+      {
+        "product_id": "canon-pixma-ts3640",
+        "device_availability": "in_stock",
+        "device_price_rub": 7276,
+        "device_source_url": "https://www.kns.ru/product/mfu-canon-pixma-ts3640/",
+        "required_consumable_ids": [
+          "canon-pg-445",
+          "canon-cl-446"
+        ],
+        "covered_consumable_ids": [
+          "canon-pg-445",
+          "canon-cl-446"
+        ],
+        "consumable_source_urls": {
+          "canon-pg-445": "https://www.kns.ru/product/kartridzh-canon-pg-445/",
+          "canon-cl-446": "https://www.kns.ru/product/kartridzh-canon-cl-446/"
+        },
+        "consumable_prices_rub": {
+          "canon-pg-445": 1700,
+          "canon-cl-446": 1669
+        },
+        "notes": "Корзина покрывает оба OEM-картриджа для всей сетки контрольных объёмов."
+      },
+      {
+        "product_id": "hp-smart-tank-580",
+        "device_availability": "in_stock",
+        "device_price_rub": 13345,
+        "device_source_url": "https://www.kns.ru/product/mfu-hp-smart-tank-580-1f3y2a/",
+        "required_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "covered_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "consumable_source_urls": {
+          "hp-gt53xl-black": "https://www.kns.ru/product/kartridzh-hp-1vv21ae/",
+          "hp-gt52-cyan": "https://www.kns.ru/product/kartridzh-hp-m0h54ae/",
+          "hp-gt52-magenta": "https://www.kns.ru/product/kartridzh-hp-m0h55ae/",
+          "hp-gt52-yellow": "https://www.kns.ru/product/kartridzh-hp-m0h56ae/"
+        },
+        "consumable_prices_rub": {
+          "hp-gt53xl-black": 1312,
+          "hp-gt52-cyan": 1036,
+          "hp-gt52-magenta": 1130,
+          "hp-gt52-yellow": 1176
+        },
+        "notes": "Устройство и полный комплект OEM-чернил отмечены как находящиеся в наличии."
+      }
+    ]
+  },
+  {
+    "id": "home-light-cartridge-tank-regard-20260820",
+    "retailer": "Regard",
+    "observed_at": "2026-08-20",
+    "source_type": "retailer",
+    "verification_status": "verified",
+    "scenario_id": "home-light-color",
+    "offers": [
+      {
+        "product_id": "canon-pixma-ts3640",
+        "device_availability": "in_stock",
+        "device_price_rub": 7530,
+        "device_source_url": "https://www.regard.ru/product/730665/mfu-canon-pixma-ts3640-6670c007",
+        "required_consumable_ids": [
+          "canon-pg-445",
+          "canon-cl-446"
+        ],
+        "covered_consumable_ids": [
+          "canon-pg-445",
+          "canon-cl-446"
+        ],
+        "consumable_source_urls": {
+          "canon-pg-445": "https://www.regard.ru/product/150582/kartridz-canon-pg-445-black",
+          "canon-cl-446": "https://www.regard.ru/product/149083/kartridz-canon-cl-446-color"
+        },
+        "consumable_prices_rub": {
+          "canon-pg-445": 1990,
+          "canon-cl-446": 1960
+        },
+        "notes": "Корзина покрывает оба OEM-картриджа для всей сетки контрольных объёмов."
+      },
+      {
+        "product_id": "hp-smart-tank-580",
+        "device_availability": "in_stock",
+        "device_price_rub": 13820,
+        "device_source_url": "https://www.regard.ru/product/653140/mfu-hp-smart-tank-580-1f3y2a",
+        "required_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "covered_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "consumable_source_urls": {
+          "hp-gt53xl-black": "https://www.regard.ru/product/332010/cernila-hp-1vv21ae-gt53xl-black",
+          "hp-gt52-cyan": "https://www.regard.ru/product/240204/cernila-hp-m0h54ae-gt52-cyan",
+          "hp-gt52-magenta": "https://www.regard.ru/product/240281/cernila-hp-m0h55ae-gt52-magenta",
+          "hp-gt52-yellow": "https://www.regard.ru/product/240205/cernila-hp-m0h56ae-gt52-yellow"
+        },
+        "consumable_prices_rub": {
+          "hp-gt53xl-black": 1730,
+          "hp-gt52-cyan": 1470,
+          "hp-gt52-magenta": 1470,
+          "hp-gt52-yellow": 1470
+        },
+        "notes": "Устройство и полный комплект OEM-чернил отмечены как находящиеся в наличии."
+      }
+    ]
   }
 ]

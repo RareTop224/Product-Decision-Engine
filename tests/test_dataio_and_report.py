@@ -17,6 +17,7 @@ from product_decision_engine.evaluation.report import (
     build_report,
     evaluate_full_tco_ablation,
     evaluate_price_robustness,
+    evaluate_retailer_pair_sensitivity,
     evaluate_scenario,
 )
 from product_decision_engine.evaluation.retailer_baskets import (
@@ -90,8 +91,8 @@ class DataAndReportTests(unittest.TestCase):
         xerox_b230_conflict = audit_product(catalog, catalog.product("xerox-b230"))
         self.assertEqual(len(xerox_b230_conflict.conflicts), 1)
         self.assertEqual(len(scenarios), 15)
-        self.assertEqual(len(basket_audits), 5)
-        self.assertEqual(sum(audit.complete for audit in basket_audits), 2)
+        self.assertEqual(len(basket_audits), 7)
+        self.assertEqual(sum(audit.complete for audit in basket_audits), 4)
         teacher_kns_audit = next(
             audit for audit in basket_audits if audit.id == "teacher-pair-kns-20260820"
         )
@@ -117,6 +118,13 @@ class DataAndReportTests(unittest.TestCase):
                 data_dir / "retailer_basket_audits.json"
             )
             if audit.scenario_id == scenario.id
+            and {
+                offer.product_id for offer in audit.offers
+            }
+            == {
+                "canon-pixma-ts3640",
+                "hp-deskjet-ink-advantage-2875",
+            }
         }
 
         expected = {
@@ -242,7 +250,42 @@ class DataAndReportTests(unittest.TestCase):
         self.assertEqual(hp_580_cyan.starter_capacity_pages, 6_000)
         self.assertEqual(hp_720_cyan.starter_capacity_pages, 8_000)
 
-    def test_phase0_report_marks_current_sample_for_reassessment(self) -> None:
+    def test_retailer_pair_sensitivity_reproduces_switches(self) -> None:
+        data_dir = PROJECT_ROOT / "data" / "golden"
+        catalog = load_catalog(data_dir)
+        scenario = next(
+            item
+            for item in load_scenarios(data_dir / "scenarios.json")
+            if item.id == "home-light-color"
+        )
+        audits = load_retailer_basket_audits(
+            data_dir / "retailer_basket_audits.json"
+        )
+        expected = {
+            frozenset(
+                {"canon-pixma-ts3640", "hp-deskjet-ink-advantage-2875"}
+            ): (23, 15),
+            frozenset({"canon-pixma-ts3640", "hp-smart-tank-580"}): (24, 2),
+        }
+
+        for product_ids, (agreement_points, full_changes) in expected.items():
+            group = tuple(
+                audit
+                for audit in audits
+                if frozenset(offer.product_id for offer in audit.offers)
+                == product_ids
+            )
+            with self.subTest(product_ids=sorted(product_ids)):
+                result = evaluate_retailer_pair_sensitivity(
+                    catalog, scenario, group
+                )
+                self.assertTrue(result.confirmed)
+                self.assertEqual(result.agreement_points, agreement_points)
+                self.assertEqual(result.total_points, 24)
+                self.assertEqual(result.full_vs_simplified_changes, full_changes)
+                self.assertEqual(result.result_count, 48)
+
+    def test_phase0_report_marks_current_sample_go_after_pair_gate(self) -> None:
         data_dir = PROJECT_ROOT / "data" / "golden"
         catalog = load_catalog(data_dir)
         scenarios = load_scenarios(data_dir / "scenarios.json")
@@ -252,13 +295,13 @@ class DataAndReportTests(unittest.TestCase):
 
         report = build_report(catalog, scenarios, basket_audits)
 
-        self.assertIn("Статус Фазы 0: `REASSESS`", report)
-        self.assertNotIn("Статус Фазы 0: `GO`", report)
+        self.assertIn("Статус Фазы 0: `GO`", report)
+        self.assertNotIn("Статус Фазы 0: `REASSESS`", report)
         self.assertIn("рекомендуемый месячный объём не опубликован в датасете", report)
         self.assertIn("Конкурентных сценариев", report)
         self.assertIn("## Состав промежуточной выборки", report)
         self.assertIn("Уникальных экономических конфигураций расходников", report)
-        self.assertIn("Рекомендация процесса: **`REASSESS BEFORE PRODUCT BUILD`**", report)
+        self.assertIn("Рекомендация процесса: **`GO TO NEXT-PHASE DECISION`**", report)
         self.assertIn("Медианный отрыв победителя от второго места", report)
         self.assertIn("Полный расчёт меняет победителя упрощённого TCO: 1 / 15", report)
         self.assertIn("Концентрация baseline по цене покупки", report)
@@ -277,19 +320,17 @@ class DataAndReportTests(unittest.TestCase):
         self.assertIn("Чувствительность к доле цветной печати и горизонту владения", report)
         self.assertIn("фиксированные 750 страниц в месяц", report)
         self.assertIn("1 / 12", report)
-        self.assertIn("переключение победителя внутри 0 из 2", report)
-        self.assertIn("предварительную устойчивость в 4 из 15", report)
         self.assertIn("Ценовая устойчивость той же матрицы", report)
         self.assertIn("0 / 12 точек с диапазоном", report)
         self.assertIn("5 / 12 точек с диапазоном", report)
         self.assertIn("## Проверка синхронных корзин одного продавца", report)
-        self.assertIn("полных одновременно покупаемых корзин — **2 из 5**", report)
+        self.assertIn("полных одновременно покупаемых корзин — **4 из 7**", report)
         self.assertIn(
-            "Смена победителя относительно цены покупки в полных корзинах: 2 / 2",
+            "Смена победителя относительно цены покупки в полных корзинах: 4 / 4",
             report,
         )
         self.assertIn(
-            "Смена победителя полного TCO относительно упрощённого в полных корзинах: 0 / 2",
+            "Смена победителя полного TCO относительно упрощённого в полных корзинах: 0 / 4",
             report,
         )
         self.assertIn("Basket-aware TCO не рассчитан", report)
@@ -299,7 +340,11 @@ class DataAndReportTests(unittest.TestCase):
         self.assertIn("9 676 ₽ (24,5%)", report)
         self.assertIn("11 790 ₽ (26,1%)", report)
         self.assertIn("полный TCO рассчитан без смешивания магазинов", report)
-        self.assertIn("Следующий фальсифицирующий тест", report)
+        self.assertIn("## Решающая многоточечная проверка пар", report)
+        self.assertIn("подтверждена для **2 из 2 пар**", report)
+        self.assertIn("Совпадение продавцов: 23 / 24 точек", report)
+        self.assertIn("Совпадение продавцов: 24 / 24 точек", report)
+        self.assertIn("17 из 96 парных расчётов", report)
         self.assertIn("## Ablation полного TCO", report)
         self.assertIn("Упрощённый baseline даёт **Epson EcoTank L4260** преимущество 3 209 ₽", report)
         self.assertIn("уменьшает обязательные покупки на 3 670 ₽ больше", report)

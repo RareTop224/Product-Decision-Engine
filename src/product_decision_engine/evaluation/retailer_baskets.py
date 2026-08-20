@@ -40,12 +40,14 @@ class RetailerBasketResult:
         return matches[0]
 
 
-def evaluate_retailer_basket(
+def _evaluate_retailer_basket(
     catalog: Catalog,
     scenario: UsageScenario,
     audit: RetailerBasketAudit,
+    *,
+    require_reference_scenario: bool,
 ) -> RetailerBasketResult:
-    if audit.scenario_id != scenario.id:
+    if require_reference_scenario and audit.scenario_id != scenario.id:
         raise ValueError("retailer basket audit and scenario ids must match")
     if audit.verification_status != VerificationStatus.VERIFIED:
         raise MissingCriticalData("retailer basket audit is not verified")
@@ -89,11 +91,13 @@ def evaluate_retailer_basket(
             if component.units_purchased > 0
         }
         declared_required = set(offer.required_consumable_ids)
-        if scenario_required != declared_required:
+        missing_from_basket = scenario_required - declared_required
+        if missing_from_basket:
             raise ValueError(
                 f"scenario-specific basket mismatch for {product.id}: "
                 f"calculated {sorted(scenario_required)}, "
-                f"declared {sorted(declared_required)}"
+                f"declared {sorted(declared_required)}, "
+                f"missing {sorted(missing_from_basket)}"
             )
         calculated.append(
             RetailerProductResult(
@@ -126,4 +130,37 @@ def evaluate_retailer_basket(
         purchase_price_winner=purchase_winner,
         simplified_tco_winner=simplified_winner,
         decision_engine_winner=decision_winner,
+    )
+
+
+def evaluate_retailer_basket(
+    catalog: Catalog,
+    scenario: UsageScenario,
+    audit: RetailerBasketAudit,
+) -> RetailerBasketResult:
+    return _evaluate_retailer_basket(
+        catalog,
+        scenario,
+        audit,
+        require_reference_scenario=True,
+    )
+
+
+def evaluate_retailer_basket_probe(
+    catalog: Catalog,
+    scenario: UsageScenario,
+    audit: RetailerBasketAudit,
+) -> RetailerBasketResult:
+    """Evaluate another scenario with the same verified retailer price basket.
+
+    The audit may deliberately cover a superset of the consumables purchased at
+    a particular probe point. Every actually purchased item must still be part
+    of the verified same-retailer basket.
+    """
+
+    return _evaluate_retailer_basket(
+        catalog,
+        scenario,
+        audit,
+        require_reference_scenario=False,
     )

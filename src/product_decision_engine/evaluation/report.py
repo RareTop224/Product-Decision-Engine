@@ -18,6 +18,7 @@ from product_decision_engine.evidence.audit import audit_product
 from product_decision_engine.evaluation.retailer_baskets import (
     RetailerBasketResult,
     evaluate_retailer_basket,
+    evaluate_retailer_basket_probe,
 )
 from product_decision_engine.ranking.break_even import find_break_even
 from product_decision_engine.ranking.engine import evaluate_eligibility
@@ -33,6 +34,9 @@ SENSITIVITY_OWNERSHIP_MONTHS = 60
 MIXED_SENSITIVITY_TOTAL_PAGES_PER_MONTH = 750
 MIXED_SENSITIVITY_COLOR_SHARES_PERCENT = (0, 25, 50, 75)
 MIXED_SENSITIVITY_OWNERSHIP_MONTHS = (12, 36, 60)
+RETAILER_PAIR_TOTAL_PAGES_PER_MONTH = (10, 25, 50, 100)
+RETAILER_PAIR_COLOR_SHARES_PERCENT = (0, 20)
+RETAILER_PAIR_OWNERSHIP_MONTHS = (12, 36, 60)
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,6 +83,29 @@ class MixedSensitivityProfile:
     require_wifi: bool
 
 
+@dataclass(frozen=True, slots=True)
+class RetailerPairSensitivity:
+    product_ids: tuple[str, ...]
+    audits: tuple[RetailerBasketAudit, ...]
+    results_by_audit: tuple[tuple[RetailerBasketResult, ...], ...]
+    agreement_points: int
+    total_points: int
+    confirmed: bool
+
+    @property
+    def full_vs_simplified_changes(self) -> int:
+        return sum(
+            result.decision_engine_winner.product.id
+            != result.simplified_tco_winner.product.id
+            for results in self.results_by_audit
+            for result in results
+        )
+
+    @property
+    def result_count(self) -> int:
+        return sum(len(results) for results in self.results_by_audit)
+
+
 MIXED_SENSITIVITY_PROFILES = (
     MixedSensitivityProfile(
         id="open",
@@ -93,6 +120,88 @@ MIXED_SENSITIVITY_PROFILES = (
         require_wifi=True,
     ),
 )
+
+
+def _retailer_pair_probe_scenarios(
+    reference: UsageScenario,
+) -> tuple[UsageScenario, ...]:
+    scenarios: list[UsageScenario] = []
+    for total_pages in RETAILER_PAIR_TOTAL_PAGES_PER_MONTH:
+        for color_share_percent in RETAILER_PAIR_COLOR_SHARES_PERCENT:
+            color_pages = total_pages * color_share_percent // 100
+            mono_pages = total_pages - color_pages
+            for ownership_months in RETAILER_PAIR_OWNERSHIP_MONTHS:
+                scenarios.append(
+                    UsageScenario(
+                        id=(
+                            f"retailer-pair-{reference.id}-{total_pages}-"
+                            f"{color_share_percent}-{ownership_months}"
+                        ),
+                        name=(
+                            f"{total_pages} стр./мес., {color_share_percent}% цвета, "
+                            f"{ownership_months} мес."
+                        ),
+                        mono_pages_per_month=mono_pages,
+                        color_pages_per_month=color_pages,
+                        ownership_months=ownership_months,
+                        require_mfp=reference.require_mfp,
+                        require_wifi=reference.require_wifi,
+                        require_auto_duplex=reference.require_auto_duplex,
+                        max_purchase_price_rub=reference.max_purchase_price_rub,
+                    )
+                )
+    return tuple(scenarios)
+
+
+def evaluate_retailer_pair_sensitivity(
+    catalog: Catalog,
+    reference: UsageScenario,
+    audits: tuple[RetailerBasketAudit, ...],
+) -> RetailerPairSensitivity:
+    complete_audits = tuple(audit for audit in audits if audit.complete)
+    if len(complete_audits) < 2:
+        raise ValueError("retailer pair sensitivity requires two complete baskets")
+    product_ids = tuple(offer.product_id for offer in complete_audits[0].offers)
+    if any(
+        tuple(offer.product_id for offer in audit.offers) != product_ids
+        for audit in complete_audits[1:]
+    ):
+        raise ValueError("retailer pair audits must preserve product order")
+
+    scenarios = _retailer_pair_probe_scenarios(reference)
+    results_by_audit = tuple(
+        tuple(
+            evaluate_retailer_basket_probe(catalog, scenario, audit)
+            for scenario in scenarios
+        )
+        for audit in complete_audits
+    )
+    agreement_points = sum(
+        len(
+            {
+                results[index].decision_engine_winner.product.id
+                for results in results_by_audit
+            }
+        )
+        == 1
+        for index in range(len(scenarios))
+    )
+    every_retailer_switches = all(
+        len({result.decision_engine_winner.product.id for result in results}) >= 2
+        for results in results_by_audit
+    )
+    confirmed = (
+        every_retailer_switches
+        and agreement_points * 4 >= len(scenarios) * 3
+    )
+    return RetailerPairSensitivity(
+        product_ids=product_ids,
+        audits=complete_audits,
+        results_by_audit=results_by_audit,
+        agreement_points=agreement_points,
+        total_points=len(scenarios),
+        confirmed=confirmed,
+    )
 
 
 def evaluate_scenario(catalog: Catalog, scenario: UsageScenario) -> ScenarioResult:
@@ -476,6 +585,24 @@ def build_report(
         )
         for audit in complete_retailer_baskets
     }
+    retailer_pair_sensitivity = tuple(
+        evaluate_retailer_pair_sensitivity(
+            catalog,
+            scenario_by_id[scenario_id],
+            tuple(group_audits),
+        )
+        for (scenario_id, _), group_audits in basket_groups.items()
+        if sum(audit.complete for audit in group_audits) >= 2
+    )
+    confirmed_retailer_pairs = tuple(
+        item for item in retailer_pair_sensitivity if item.confirmed
+    )
+    retailer_probe_full_vs_simplified_changes = sum(
+        item.full_vs_simplified_changes for item in retailer_pair_sensitivity
+    )
+    retailer_probe_result_count = sum(
+        item.result_count for item in retailer_pair_sensitivity
+    )
     retailer_basket_purchase_changes = sum(
         result.purchase_price_winner.product.id
         != result.decision_engine_winner.product.id
@@ -581,6 +708,11 @@ def build_report(
     }
     execution_viable = bool(scenarios) and len(competitive) == len(scenarios)
     early_value_signal = bool(competitive_changed) and len(sensitivity_winner_ids) >= 2
+    retailer_pair_gate_ready = len(retailer_pair_sensitivity) >= 2
+    retailer_pair_signal = (
+        retailer_pair_gate_ready
+        and len(confirmed_retailer_pairs) == len(retailer_pair_sensitivity)
+    )
     dataset_ready = (
         len(catalog.products) >= 30
         and len(scenarios) >= 10
@@ -593,6 +725,8 @@ def build_report(
         phase0_status = "REASSESS"
     elif not competitive_changed:
         phase0_status = "NO-GO"
+    elif retailer_pair_gate_ready:
+        phase0_status = "GO" if retailer_pair_signal else "NO-GO"
     elif not early_value_signal:
         phase0_status = "REASSESS"
     else:
@@ -664,6 +798,17 @@ def build_report(
                 f"{retailer_basket_simplified_changes} / {len(retailer_basket_results)}",
             ]
         )
+    if retailer_pair_sensitivity:
+        lines.extend(
+            [
+                "- Пар с двумя полными корзинами и многоточечной проверкой: "
+                f"{len(retailer_pair_sensitivity)}",
+                "- Пар с воспроизводимой сменой победителя по сценарию: "
+                f"{len(confirmed_retailer_pairs)} / {len(retailer_pair_sensitivity)}",
+                "- Смена полного TCO относительно упрощённого в парных контрольных точках: "
+                f"{retailer_probe_full_vs_simplified_changes} / {retailer_probe_result_count}",
+            ]
+        )
     if most_common_winner:
         product = catalog.product(most_common_winner[0])
         lines.append(
@@ -719,13 +864,23 @@ def build_report(
         ]
     )
     if phase0_status == "GO":
-        lines.extend(
-            [
-                "- Рекомендация процесса: **`GO`** — минимальные критерии Proof of Value выполнены.",
-                f"- Основание: все {len(scenarios)} сценариев конкурентны, Decision Engine меняет выбор в {len(competitive_changed)} из них, а контроль чувствительности даёт {len(sensitivity_winner_ids)} разных победителя.",
-                "- Перед production-разработкой всё равно требуется обновить и расширить ценовые наблюдения: Phase 0 доказывает полезность расчёта, а не готовность price feed.",
-            ]
-        )
+        if retailer_pair_signal:
+            lines.extend(
+                [
+                    "- Рекомендация процесса: **`GO TO NEXT-PHASE DECISION`** — Proof of Value подтверждён; проект имеет смысл продолжать, но это ещё не разрешение на production-разработку.",
+                    f"- Основание: сценарная смена победителя воспроизводится для {len(confirmed_retailer_pairs)} из {len(retailer_pair_sensitivity)} прямых пар у двух продавцов; совпадение результатов между продавцами составляет не менее 75% контрольных точек.",
+                    f"- Специализированный вклад не нулевой: полный расчёт starter/maintenance меняет победителя упрощённого TCO в {retailer_probe_full_vs_simplified_changes} из {retailer_probe_result_count} парных расчётов продавец × сценарий.",
+                    "- Ограничение: широкая глобальная сетка всё ещё концентрируется на СНПЧ, а 3 из 7 ранних аудитов корзин неполны. Следующая фаза должна сначала решить актуализацию цен/наличия и нормализацию evidence, а не строить большой интерфейс.",
+                ]
+            )
+        else:
+            lines.extend(
+                [
+                    "- Рекомендация процесса: **`GO`** — минимальные критерии Proof of Value выполнены.",
+                    f"- Основание: все {len(scenarios)} сценариев конкурентны, Decision Engine меняет выбор в {len(competitive_changed)} из них, а контроль чувствительности даёт {len(sensitivity_winner_ids)} разных победителя.",
+                    "- Перед production-разработкой всё равно требуется обновить и расширить ценовые наблюдения: Phase 0 доказывает полезность расчёта, а не готовность price feed.",
+                ]
+            )
         if most_common_winner_brand and most_common_winner_brand[1] * 3 >= len(complete) * 2:
             lines.append(
                 f"- Риск концентрации: бренд {most_common_winner_brand[0]} даёт "
@@ -761,12 +916,20 @@ def build_report(
                 "- Следующий шаг должен разбирать причины концентрации и преимущество полного расчёта над упрощённым TCO; простое добавление похожих моделей или сценариев сигнал не усилит."
             )
     elif phase0_status == "NO-GO":
-        lines.extend(
-            [
-                "- Рекомендация процесса: **`NO-GO`** — на текущей полной выборке Decision Engine не меняет наивный выбор по цене покупки.",
-                "- До новой продуктовой разработки требуется пересмотр гипотезы или категории.",
-            ]
-        )
+        if retailer_pair_gate_ready and not retailer_pair_signal:
+            lines.extend(
+                [
+                    "- Рекомендация процесса: **`NO-GO`** — решающая проверка прямых пар не воспроизвела сценарную смену победителя у двух продавцов.",
+                    "- Дальнейшее расширение выборки принтеров не оправдано без пересмотра гипотезы или категории.",
+                ]
+            )
+        else:
+            lines.extend(
+                [
+                    "- Рекомендация процесса: **`NO-GO`** — на текущей полной выборке Decision Engine не меняет наивный выбор по цене покупки.",
+                    "- До новой продуктовой разработки требуется пересмотр гипотезы или категории.",
+                ]
+            )
     else:
         lines.extend(
             [
@@ -926,6 +1089,77 @@ def build_report(
                     f"- **{audit.retailer}**: "
                     + (", ".join(links) or "нет подтверждённых карточек")
                 )
+
+    if retailer_pair_sensitivity:
+        lines.extend(
+            [
+                "",
+                "## Решающая многоточечная проверка пар",
+                "",
+                "Для каждой пары используются неизменные цены полной корзины одного продавца, "
+                "а меняются только сценарные входы: 10/25/50/100 страниц в месяц, 0%/20% "
+                "цвета и горизонт 1/3/5 лет. Пара считается подтверждённой, если победитель "
+                "меняется у каждого из двух продавцов и продавцы совпадают минимум в 75% "
+                "контрольных точек.",
+            ]
+        )
+        for sensitivity_item in retailer_pair_sensitivity:
+            products = tuple(
+                catalog.product(product_id)
+                for product_id in sensitivity_item.product_ids
+            )
+            lines.extend(
+                [
+                    "",
+                    "### " + " ↔ ".join(_product_name(product) for product in products),
+                    "",
+                    f"- Результат: **{'подтверждено' if sensitivity_item.confirmed else 'не подтверждено'}**.",
+                    f"- Совпадение продавцов: {sensitivity_item.agreement_points} / "
+                    f"{sensitivity_item.total_points} точек "
+                    f"({_percent(sensitivity_item.agreement_points, sensitivity_item.total_points)}).",
+                    f"- Полный и упрощённый TCO расходятся по победителю в "
+                    f"{sensitivity_item.full_vs_simplified_changes} / "
+                    f"{sensitivity_item.result_count} расчётов продавец × сценарий.",
+                    "",
+                    "| Продавец | Доля цвета | Горизонт | Победители при 10 / 25 / 50 / 100 стр./мес. |",
+                    "|---|---:|---:|---|",
+                ]
+            )
+            for audit, audit_results in zip(
+                sensitivity_item.audits,
+                sensitivity_item.results_by_audit,
+                strict=True,
+            ):
+                for color_share_percent in RETAILER_PAIR_COLOR_SHARES_PERCENT:
+                    for ownership_months in RETAILER_PAIR_OWNERSHIP_MONTHS:
+                        matching = tuple(
+                            result
+                            for result in audit_results
+                            if result.scenario.ownership_months == ownership_months
+                            and (
+                                result.scenario.color_pages_per_month
+                                * 100
+                                // result.scenario.monthly_pages
+                            )
+                            == color_share_percent
+                        )
+                        winners = " / ".join(
+                            _product_name(result.decision_engine_winner.product)
+                            for result in matching
+                        )
+                        lines.append(
+                            f"| {audit.retailer} | {color_share_percent}% | "
+                            f"{ownership_months} мес. | {winners} |"
+                        )
+
+        lines.extend(
+            [
+                "",
+                f"Итог: сценарная смена победителя подтверждена для "
+                f"**{len(confirmed_retailer_pairs)} из {len(retailer_pair_sensitivity)} пар** "
+                "на синхронных рыночных корзинах.",
+            ]
+        )
 
     lines.extend(["", "## Ablation полного TCO", ""])
     if not simplified_changed:
