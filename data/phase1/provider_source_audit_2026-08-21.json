@@ -32,6 +32,28 @@
         "https://price.ru/user-agreement/",
         "https://advertising.price.ru/partnerprice/"
       ],
+      "affiliate_program_check": {
+        "access_direction": "price_ru_to_affiliate",
+        "access_method": "application_required",
+        "commercial_model": "cpc",
+        "confirmed_feed_scope": "all_price_ru_products",
+        "publicly_confirmed_fields": [
+          "product_links",
+          "product_descriptions"
+        ],
+        "fields_not_publicly_confirmed": [
+          "offer_id",
+          "seller_id",
+          "seller_name",
+          "direct_seller_url",
+          "price_rub",
+          "availability",
+          "observed_at",
+          "manufacturer",
+          "mpn_or_vendor_code"
+        ],
+        "contact_email": "dmitry.nikiforov@price-team.ru"
+      },
       "readiness_gates": {
         "structured_access": "unknown",
         "exact_product_identity": "unknown",
@@ -43,7 +65,8 @@
       },
       "findings": [
         "Публичные карточки подходят для ручного обнаружения предложений, но автоматический сбор без разрешения ограничен условиями сервиса.",
-        "Официальный production-кандидат — партнёрский XML-фид; доступ и достаточность его полей ещё не подтверждены.",
+        "Партнёрский XML является исходящим affiliate-feed Price.ru и требует заявки; публично подтверждены все товары, ссылки и описания, но не price, seller, availability, exact MPN и timestamp.",
+        "Пока не получены образец фида и договорные условия, XML нельзя считать источником данных, достаточным для TCO.",
         "Карточка расходника может смешивать OEM и совместимые предложения, поэтому exact manufacturer + part number обязателен."
       ]
     },
@@ -71,6 +94,46 @@
           "Опт",
           "Клуб",
           "Валюта"
+        ]
+      },
+      "currency_reconciliation": {
+        "rate_source_name": "Банк России",
+        "rate_source_url": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=20/08/2026",
+        "rate_date": "2026-08-20",
+        "usd_rub_rate": "85.1293",
+        "tolerance_percent": "1.0",
+        "tolerance_basis": "KNS указывает право пересчёта стоимости при изменении курса USD ЦБ РФ более чем на 1%.",
+        "samples": [
+          {
+            "product_id": "canon-pixma-ts3640",
+            "price_list_internet_usd": "91.00",
+            "live_page_price_rub": 7276
+          },
+          {
+            "product_id": "hp-deskjet-ink-advantage-2875",
+            "price_list_internet_usd": "90.50",
+            "live_page_price_rub": 7747
+          },
+          {
+            "product_id": "hp-smart-tank-580",
+            "price_list_internet_usd": "162.50",
+            "live_page_price_rub": 13953
+          },
+          {
+            "product_id": "pantum-m7100dw",
+            "price_list_internet_usd": "458.50",
+            "live_page_price_rub": 39248
+          },
+          {
+            "product_id": "canon-isensys-mf655cdw",
+            "price_list_internet_usd": "710.50",
+            "live_page_price_rub": 52858
+          },
+          {
+            "product_id": "pantum-cm1100adw",
+            "price_list_internet_usd": "733.50",
+            "live_page_price_rub": 62745
+          }
         ]
       },
       "cohort_coverage": {
@@ -195,7 +258,7 @@
       },
       "findings": [
         "Прайс-лист даёт широкое структурированное exact-SKU покрытие и отделяет валюту цены.",
-        "Большинство строк прайс-листа выражено в USD; опубликованное правило пересчёта в RUB в файле не найдено.",
+        "Большинство строк прайс-листа выражено в USD. Проверка шести доступных устройств по официальному курсу ЦБ показала, что единый пересчёт не воспроизводит все live-цены: промо и другие правила ценообразования требуют финальной RUB-цены из источника.",
         "В файле нет явного наличия, стабильного item id и URL карточки товара.",
         "Совместимые расходники содержат OEM part number в собственном названии, поэтому одного поиска по part number недостаточно: нужен также точный производитель.",
         "Публичность файла не считается разрешением на коммерческую автоматизацию; условия нужно согласовать отдельно."
@@ -280,6 +343,6 @@
       "required_action": "Сопоставлять MPN и прямую ссылку продавца; агрегированное предложение не принимать как наличие до проверки карточки продавца."
     }
   ],
-  "decision": "CONTINUE_WITH_KNS_FEED_DUE_DILIGENCE",
-  "decision_notes": "KNS является лучшим найденным структурированным кандидатом, но ни один проверенный источник пока не проходит все обязательные production-гейты. Следующий полезный шаг — выяснить у KNS наличие dealer/export feed с RUB, availability, stable item id/URL и правами коммерческого использования; параллельно Price.ru остаётся слоем обнаружения предложений."
+  "decision": "CONTINUE_WITH_FORMAL_PROVIDER_ACCESS_REQUESTS",
+  "decision_notes": "KNS остаётся лучшим найденным структурированным кандидатом, а Price.ru подтвердил исходящий affiliate XML после заявки. Но ни один источник пока не документирует полный набор price, availability, exact identity, timestamp и прав коммерческого использования. Следующий шаг — запросить образцы и договорные условия обоих фидов; расчёт RUB по курсу ЦБ и scraping публичных карточек не являются допустимой заменой."
 }

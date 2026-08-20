@@ -4,6 +4,7 @@ import json
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +38,52 @@ class ProviderReadinessSummary:
     passed_gates: int
     required_gates: int
     production_ready: bool
+
+
+@dataclass(frozen=True)
+class CurrencyReconciliationSummary:
+    sample_count: int
+    within_tolerance_count: int
+    tolerance_percent: Decimal
+    maximum_error_percent: Decimal
+    universally_reproducible: bool
+
+
+def analyze_currency_reconciliation(
+    reconciliation: dict[str, Any],
+    cohort_ids: tuple[str, ...],
+) -> CurrencyReconciliationSummary:
+    rate = Decimal(reconciliation["usd_rub_rate"])
+    tolerance = Decimal(reconciliation["tolerance_percent"])
+    if rate <= 0 or tolerance < 0:
+        raise ValueError("Currency rate must be positive and tolerance non-negative")
+
+    samples = reconciliation["samples"]
+    if not samples:
+        raise ValueError("Currency reconciliation requires samples")
+    sample_ids = tuple(item["product_id"] for item in samples)
+    if len(set(sample_ids)) != len(sample_ids):
+        raise ValueError("Currency reconciliation product ids must be unique")
+    if not set(sample_ids) <= set(cohort_ids):
+        raise ValueError("Currency reconciliation contains a product outside cohort")
+
+    errors: list[Decimal] = []
+    for sample in samples:
+        usd_price = Decimal(sample["price_list_internet_usd"])
+        rub_price = Decimal(sample["live_page_price_rub"])
+        if usd_price <= 0 or rub_price <= 0:
+            raise ValueError("Currency reconciliation prices must be positive")
+        expected_rub = usd_price * rate
+        errors.append(abs(rub_price - expected_rub) * 100 / expected_rub)
+
+    within_tolerance = sum(error <= tolerance for error in errors)
+    return CurrencyReconciliationSummary(
+        sample_count=len(samples),
+        within_tolerance_count=within_tolerance,
+        tolerance_percent=tolerance,
+        maximum_error_percent=max(errors),
+        universally_reproducible=within_tolerance == len(samples),
+    )
 
 
 def analyze_provider_source_audit(
@@ -384,11 +431,18 @@ def build_phase1_market_report(
         )
 
     kns = provider_by_key["kns"]
+    price_ru = provider_by_key["price-ru"]
     kns_coverage = kns["cohort_coverage"]
     kns_device_matches = len(
         kns_coverage["exact_device_rows"]["matched_product_ids"]
     )
     kns_consumables = kns_coverage["exact_oem_consumables"]
+    currency_reconciliation = analyze_currency_reconciliation(
+        kns["currency_reconciliation"], cohort_ids
+    )
+    maximum_error_display = (
+        f"{currency_reconciliation.maximum_error_percent:.1f}".replace(".", ",")
+    )
     conflict = provider_audit["cross_source_conflicts"][0]
     lines.extend(
         [
@@ -414,6 +468,26 @@ def build_phase1_market_report(
             "потребовало бы эвристического поиска по названию — это не принимается как "
             "устойчивый provider adapter без feed или стабильного ключа.",
             "",
+            "Проверка прямого пересчёта по официальному курсу ЦБ также не закрыла "
+            "проблему. В пределах опубликованного KNS порога **"
+            f"{str(currency_reconciliation.tolerance_percent).replace('.', ',')}%** "
+            f"оказались **{currency_reconciliation.within_tolerance_count} / "
+            f"{currency_reconciliation.sample_count}** доступных устройств; максимальное "
+            "отклонение составило **"
+            f"{maximum_error_display}%**. Единый курс "
+            "не воспроизводит промо-цены, поэтому финальная RUB-цена должна приходить "
+            "из карточки или договорного feed как отдельное поле.",
+            "",
+            "### Что подтвердилось по XML Price.ru",
+            "",
+            "Price.ru публично подтверждает исходящий affiliate XML после заявки: feed "
+            "охватывает все товары и содержит ссылки и описания. Но цена, seller, "
+            "availability, timestamp и exact MPN в публичном описании не заявлены. "
+            f"Неподтверждённых обязательных полей: **"
+            f"{len(price_ru['affiliate_program_check']['fields_not_publicly_confirmed'])}**. "
+            "До получения образца и договора этот канал остаётся кандидатом, а не "
+            "production-approved источником TCO.",
+            "",
             "### Обнаруженный конфликт между источниками",
             "",
             f"- **Epson EcoTank L4260**: {conflict['source_a']} "
@@ -427,10 +501,15 @@ def build_phase1_market_report(
             "Epson L4260 предлагается запросить цену. Ни один из этих источников пока не "
             "дал публичный структурированный feed.",
             "",
-            "Вывод проверки: **KNS — основной кандидат для следующего due diligence**, "
-            "Price.ru остаётся слоем обнаружения предложений, а профильные магазины — "
-            "проверкой exact SKU, наличия и lifecycle. Ни один источник ещё не получил "
-            "статус production-approved.",
+            "Вывод проверки: **KNS — основной кандидат для следующего due diligence** "
+            "структурированного каталога, а affiliate XML Price.ru — второй официальный "
+            "кандидат на предложения. Профильные магазины остаются независимой проверкой "
+            "exact SKU, наличия и lifecycle. Ни один источник ещё не получил статус "
+            "production-approved.",
+            "",
+            "Готовые запросы образцов feed и договорных условий сохранены в "
+            "`docs/provider-access-request.md`; они не отправляются от имени владельца "
+            "проекта без отдельного разрешения.",
             "",
             "## Что проверяется дальше",
             "",
