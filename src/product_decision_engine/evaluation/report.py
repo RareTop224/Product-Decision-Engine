@@ -7,8 +7,10 @@ from statistics import median
 
 from product_decision_engine.domain.catalog import Catalog, MissingCriticalData
 from product_decision_engine.domain.models import (
+    OfferAvailability,
     Product,
     ProductConsumableRole,
+    RetailerBasketAudit,
     UsageScenario,
     VerificationStatus,
 )
@@ -54,6 +56,15 @@ class PriceRobustness:
     best_challenger_tco_min_rub: int | None
     has_observed_range: bool
     robust: bool
+
+
+@dataclass(frozen=True, slots=True)
+class FullTcoAblation:
+    product: Product
+    simplified_tco_rub: int
+    starter_credit_rub: int
+    maintenance_cost_rub: int
+    full_tco_rub: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -154,6 +165,40 @@ def _percent(numerator: int, denominator: int) -> str:
 
 def _product_name(product: Product) -> str:
     return f"{product.manufacturer} {product.model}"
+
+
+def evaluate_full_tco_ablation(
+    catalog: Catalog,
+    product: Product,
+    scenario: UsageScenario,
+) -> FullTcoAblation:
+    simplified = calculate_simplified_tco(catalog, product.id, scenario)
+    full = calculate_tco(catalog, product.id, scenario)
+    starter_credit = simplified.consumables_cost_rub - full.consumables_cost_rub
+    reconstructed_total = (
+        simplified.total_cost_rub - starter_credit + full.maintenance_cost_rub
+    )
+    if reconstructed_total != full.total_cost_rub:
+        raise ValueError(f"TCO ablation identity failed for {product.id}")
+    return FullTcoAblation(
+        product=product,
+        simplified_tco_rub=simplified.total_cost_rub,
+        starter_credit_rub=starter_credit,
+        maintenance_cost_rub=full.maintenance_cost_rub,
+        full_tco_rub=full.total_cost_rub,
+    )
+
+
+def _availability_label(availability: OfferAvailability) -> str:
+    return {
+        OfferAvailability.IN_STOCK: "в наличии",
+        OfferAvailability.ORDERABLE_UNCONFIRMED: "заказ доступен, срок не подтверждён",
+        OfferAvailability.EXPECTED: "ожидается",
+        OfferAvailability.TRANSIT: "в транзите",
+        OfferAvailability.UNAVAILABLE: "недоступно",
+        OfferAvailability.NOT_LISTED: "не найдено в каталоге",
+        OfferAvailability.UNVERIFIED: "не подтверждено",
+    }[availability]
 
 
 def _economic_configuration_signature(
@@ -361,7 +406,22 @@ def evaluate_price_robustness(
     )
 
 
-def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
+def build_report(
+    catalog: Catalog,
+    scenarios: tuple[UsageScenario, ...],
+    retailer_basket_audits: tuple[RetailerBasketAudit, ...] = (),
+) -> str:
+    if retailer_basket_audits:
+        scenario_ids = {scenario.id for scenario in scenarios}
+        basket_pairs = {
+            frozenset(offer.product_id for offer in audit.offers)
+            for audit in retailer_basket_audits
+        }
+        if len(basket_pairs) != 1:
+            raise ValueError("retailer basket report expects one consistent product pair")
+        if any(audit.scenario_id not in scenario_ids for audit in retailer_basket_audits):
+            raise ValueError("retailer basket audit references an unknown scenario")
+
     results = tuple(evaluate_scenario(catalog, scenario) for scenario in scenarios)
     price_robustness = tuple(
         evaluate_price_robustness(catalog, result) for result in results
@@ -398,6 +458,9 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         result
         for result in complete
         if result.simplified_tco_winner != result.decision_engine_winner
+    )
+    complete_retailer_baskets = tuple(
+        audit for audit in retailer_basket_audits if audit.complete
     )
     savings = tuple(
         result.purchase_price_winner_tco.total_cost_rub
@@ -563,6 +626,11 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
         else "- Проверка диапазона цен: пока нет повторных наблюдений",
         f"- Покрытие повторными ценовыми наблюдениями: {repeated_price_entities} / {len(price_entity_counts)} оцениваемых сущностей",
     ]
+    if retailer_basket_audits:
+        lines.append(
+            "- Полных синхронных корзин для целевой пары: "
+            f"{len(complete_retailer_baskets)} / {len(retailer_basket_audits)} продавцов"
+        )
     if most_common_winner:
         product = catalog.product(most_common_winner[0])
         lines.append(
@@ -661,6 +729,116 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
             [
                 "- Рекомендация процесса: **`CONTINUE PHASE 0`** — выборка или сценарное покрытие ещё не достигли минимального gate.",
                 "- Это промежуточная проверка процесса, а не итоговый вывод.",
+            ]
+        )
+
+    if retailer_basket_audits:
+        basket_product_ids = tuple(
+            offer.product_id for offer in retailer_basket_audits[0].offers
+        )
+        basket_products = tuple(catalog.product(product_id) for product_id in basket_product_ids)
+        lines.extend(
+            [
+                "",
+                "## Проверка синхронных корзин одного продавца",
+                "",
+                "Строгая корзина требует одновременно доступное точное устройство и полный набор "
+                "OEM replacement consumables у одного продавца на одну дату. Статусы «ожидается», "
+                "«в транзите», «недоступно» и неподтверждённый срок не считаются наличием.",
+                "",
+                "| Продавец | Дата | "
+                + " | ".join(_product_name(product) for product in basket_products)
+                + " | Полная парная корзина |",
+                "|---|---|" + "---|" * len(basket_products) + "---|",
+            ]
+        )
+        for audit in retailer_basket_audits:
+            offers_by_product = {offer.product_id: offer for offer in audit.offers}
+            cells: list[str] = []
+            for product_id in basket_product_ids:
+                offer = offers_by_product[product_id]
+                device_price = (
+                    f", {_money(offer.device_price_rub)}"
+                    if offer.device_price_rub is not None
+                    else ""
+                )
+                cells.append(
+                    f"устройство: {_availability_label(offer.device_availability)}{device_price}; "
+                    f"OEM: {len(offer.covered_consumable_ids)}/{len(offer.required_consumable_ids)}"
+                )
+            lines.append(
+                f"| {audit.retailer} | {audit.observed_at} | "
+                + " | ".join(cells)
+                + f" | {'да' if audit.complete else 'нет'} |"
+            )
+
+        lines.extend(["", "Источники проверки корзин:", ""])
+        for audit in retailer_basket_audits:
+            links: list[str] = []
+            for offer in audit.offers:
+                product = catalog.product(offer.product_id)
+                if offer.device_source_url:
+                    links.append(
+                        f"[{_product_name(product)} — устройство]({offer.device_source_url})"
+                    )
+                links.extend(
+                    f"[{consumable_id}]({url})"
+                    for consumable_id, url in offer.consumable_source_urls
+                )
+            lines.append(f"- **{audit.retailer}**: " + (", ".join(links) or "нет подтверждённых карточек"))
+
+        lines.extend(
+            [
+                "",
+                f"Итог: полных одновременно покупаемых корзин — **{len(complete_retailer_baskets)} из {len(retailer_basket_audits)}**.",
+            ]
+        )
+        if not complete_retailer_baskets:
+            lines.append(
+                "Basket-aware TCO не рассчитан: любой числовой результат потребовал бы смешать "
+                "магазины либо использовать недоступное устройство. Ценовая устойчивость этой "
+                "пары остаётся неподтверждённой."
+            )
+
+    lines.extend(["", "## Ablation полного TCO", ""])
+    if not simplified_changed:
+        lines.append(
+            "Полный учёт starter/maintenance не меняет победителя ни в одном сценарии."
+        )
+    for result in simplified_changed:
+        assert result.simplified_tco_winner is not None
+        assert result.decision_engine_winner is not None
+        simplified_winner = evaluate_full_tco_ablation(
+            catalog, result.simplified_tco_winner, result.scenario
+        )
+        full_winner = evaluate_full_tco_ablation(
+            catalog, result.decision_engine_winner, result.scenario
+        )
+        baseline_lead = (
+            full_winner.simplified_tco_rub - simplified_winner.simplified_tco_rub
+        )
+        starter_advantage = (
+            full_winner.starter_credit_rub - simplified_winner.starter_credit_rub
+        )
+        maintenance_delta = (
+            full_winner.maintenance_cost_rub - simplified_winner.maintenance_cost_rub
+        )
+        final_margin = simplified_winner.full_tco_rub - full_winner.full_tco_rub
+        lines.extend(
+            [
+                f"### {result.scenario.name}",
+                "",
+                "| Модель | Упрощённый TCO | Снижение покупок за счёт starter | Maintenance | Полный TCO |",
+                "|---|---:|---:|---:|---:|",
+                f"| {_product_name(simplified_winner.product)} | {_money(simplified_winner.simplified_tco_rub)} | −{_money(simplified_winner.starter_credit_rub)} | +{_money(simplified_winner.maintenance_cost_rub)} | {_money(simplified_winner.full_tco_rub)} |",
+                f"| {_product_name(full_winner.product)} | {_money(full_winner.simplified_tco_rub)} | −{_money(full_winner.starter_credit_rub)} | +{_money(full_winner.maintenance_cost_rub)} | {_money(full_winner.full_tco_rub)} |",
+                "",
+                f"Упрощённый baseline даёт **{_product_name(simplified_winner.product)}** преимущество {_money(baseline_lead)}. "
+                f"Стартовый комплект **{_product_name(full_winner.product)}** уменьшает обязательные покупки на {_money(starter_advantage)} больше; "
+                f"разница maintenance составляет {_money(maintenance_delta)}. После полного расчёта **{_product_name(full_winner.product)}** выигрывает всего {_money(final_margin)}.",
+                "",
+                "Вывод: переключение создаёт starter-комплект, а не maintenance; малый финальный отрыв делает результат особенно чувствительным к синхронным ценам.",
+                "",
             ]
         )
 
@@ -882,6 +1060,13 @@ def build_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...]) -> str:
     return "\n".join(lines)
 
 
-def write_report(catalog: Catalog, scenarios: tuple[UsageScenario, ...], path: Path) -> None:
+def write_report(
+    catalog: Catalog,
+    scenarios: tuple[UsageScenario, ...],
+    path: Path,
+    retailer_basket_audits: tuple[RetailerBasketAudit, ...] = (),
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(build_report(catalog, scenarios), encoding="utf-8")
+    path.write_text(
+        build_report(catalog, scenarios, retailer_basket_audits), encoding="utf-8"
+    )

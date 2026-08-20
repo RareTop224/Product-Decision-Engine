@@ -1,0 +1,156 @@
+[
+  {
+    "id": "teacher-pair-kns-20260820",
+    "retailer": "KNS",
+    "observed_at": "2026-08-20",
+    "source_type": "retailer",
+    "verification_status": "verified",
+    "scenario_id": "teacher-mixed",
+    "offers": [
+      {
+        "product_id": "hp-smart-tank-720",
+        "device_availability": "expected",
+        "device_price_rub": 32999,
+        "device_source_url": "https://www.kns.ru/product/mfu-hp-smart-tank-720-6uu46a/",
+        "required_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "covered_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "consumable_source_urls": {
+          "hp-gt53xl-black": "https://www.kns.ru/product/kartridzh-hp-1vv21ae/",
+          "hp-gt52-cyan": "https://www.kns.ru/product/kartridzh-hp-m0h54ae/",
+          "hp-gt52-magenta": "https://www.kns.ru/product/kartridzh-hp-m0h55ae/",
+          "hp-gt52-yellow": "https://www.kns.ru/product/kartridzh-hp-m0h56ae/"
+        },
+        "notes": "Точная модель 6UU46A отмечена как ожидаемая, поэтому корзина не считается одновременно покупаемой."
+      },
+      {
+        "product_id": "epson-ecotank-l4260",
+        "device_availability": "unavailable",
+        "device_price_rub": 36683,
+        "device_source_url": "https://www.kns.ru/product/mfu-epson-l4260/",
+        "required_consumable_ids": [
+          "epson-101-black",
+          "epson-101-cyan",
+          "epson-101-magenta",
+          "epson-101-yellow"
+        ],
+        "covered_consumable_ids": [
+          "epson-101-black",
+          "epson-101-cyan",
+          "epson-101-magenta",
+          "epson-101-yellow"
+        ],
+        "consumable_source_urls": {
+          "epson-101-black": "https://www.kns.ru/product/kartridzh-epson-c13t03v14a/",
+          "epson-101-cyan": "https://www.kns.ru/product/kartridzh-epson-c13t03v24a/",
+          "epson-101-magenta": "https://www.kns.ru/product/kartridzh-epson-c13t03v34a/",
+          "epson-101-yellow": "https://www.kns.ru/product/kartridzh-epson-c13t03v44a/"
+        },
+        "notes": "Карточка показывает последнюю цену и предлагает аналог; точная модель недоступна для заказа."
+      }
+    ]
+  },
+  {
+    "id": "teacher-pair-hp-rus-20260820",
+    "retailer": "HP-RUS",
+    "observed_at": "2026-08-20",
+    "source_type": "retailer",
+    "verification_status": "verified",
+    "scenario_id": "teacher-mixed",
+    "offers": [
+      {
+        "product_id": "hp-smart-tank-720",
+        "device_availability": "transit",
+        "device_price_rub": 37763,
+        "device_source_url": "https://hp-rus.com/catalog/printery/hp-smart-tank-720-all-in-one-printer/",
+        "required_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "covered_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "consumable_source_urls": {
+          "hp-gt53xl-black": "https://hp-rus.com/catalog/kartridzhi/yemkost-s-chernilami-hp-gt53-chernaya-uvelichennoy/",
+          "hp-gt52-cyan": "https://hp-rus.com/catalog/kartridzhi/hp-gt52-cyan-original-ink-bottle-m0h54ae/",
+          "hp-gt52-magenta": "https://hp-rus.com/catalog/kartridzhi/chernila-emkost-s-chernilami-hp-gt52-k-gt-5810-582/",
+          "hp-gt52-yellow": "https://hp-rus.com/catalog/kartridzhi/emkost-s-chernilami-hp-gt52-k-gt-5810-5820-zheltyy/"
+        },
+        "notes": "Устройство отмечено как находящееся в транзите, а не в наличии."
+      },
+      {
+        "product_id": "epson-ecotank-l4260",
+        "device_availability": "unverified",
+        "device_price_rub": null,
+        "device_source_url": null,
+        "required_consumable_ids": [
+          "epson-101-black",
+          "epson-101-cyan",
+          "epson-101-magenta",
+          "epson-101-yellow"
+        ],
+        "covered_consumable_ids": [],
+        "consumable_source_urls": {},
+        "notes": "Продавец специализируется на HP; полная корзина Epson у него не подтверждена."
+      }
+    ]
+  },
+  {
+    "id": "teacher-pair-xcom-20260820",
+    "retailer": "XCOM-SHOP",
+    "observed_at": "2026-08-20",
+    "source_type": "retailer",
+    "verification_status": "verified",
+    "scenario_id": "teacher-mixed",
+    "offers": [
+      {
+        "product_id": "hp-smart-tank-720",
+        "device_availability": "unverified",
+        "device_price_rub": null,
+        "device_source_url": "https://www.xcom-shop.ru/hp_smart_tank_720_885322.html",
+        "required_consumable_ids": [
+          "hp-gt53xl-black",
+          "hp-gt52-cyan",
+          "hp-gt52-magenta",
+          "hp-gt52-yellow"
+        ],
+        "covered_consumable_ids": [
+          "hp-gt53xl-black"
+        ],
+        "consumable_source_urls": {
+          "hp-gt53xl-black": "https://www.xcom-shop.ru/hp_gt53xl_804895.html"
+        },
+        "notes": "Карточка точного устройства найдена, но актуальные цена и наличие не подтверждены; из полного комплекта OEM-чернил подтверждена только чёрная бутылка."
+      },
+      {
+        "product_id": "epson-ecotank-l4260",
+        "device_availability": "orderable_unconfirmed",
+        "device_price_rub": 28350,
+        "device_source_url": "https://www.xcom-shop.ru/epson_ecotank_l4260_1141402.html",
+        "required_consumable_ids": [
+          "epson-101-black",
+          "epson-101-cyan",
+          "epson-101-magenta",
+          "epson-101-yellow"
+        ],
+        "covered_consumable_ids": [],
+        "consumable_source_urls": {},
+        "notes": "Устройство добавляется в корзину, но сроки выдачи требуют уточнения; полный набор оригинальных Epson 101 у того же продавца не подтверждён."
+      }
+    ]
+  }
+]

@@ -11,12 +11,15 @@ from product_decision_engine.domain.models import (
     ConsumableKind,
     Evidence,
     MaintenanceDataStatus,
+    OfferAvailability,
     PageScope,
     PriceObservation,
     Product,
     ProductConsumable,
     ProductConsumableRole,
     ProductType,
+    RetailerBasketAudit,
+    RetailerProductCoverage,
     UsageScenario,
     VerificationStatus,
 )
@@ -116,3 +119,39 @@ def load_scenarios(path: Path) -> tuple[UsageScenario, ...]:
     scenarios = tuple(UsageScenario(**item) for item in _read_array(path))
     _ensure_unique_ids(scenarios, "scenario")
     return scenarios
+
+
+def load_retailer_basket_audits(path: Path) -> tuple[RetailerBasketAudit, ...]:
+    audits = tuple(
+        RetailerBasketAudit(
+            id=item["id"],
+            retailer=item["retailer"],
+            observed_at=item["observed_at"],
+            source_type=item["source_type"],
+            verification_status=VerificationStatus(item["verification_status"]),
+            scenario_id=item["scenario_id"],
+            offers=tuple(
+                RetailerProductCoverage(
+                    **{
+                        **offer,
+                        "device_availability": OfferAvailability(
+                            offer["device_availability"]
+                        ),
+                        "required_consumable_ids": tuple(
+                            offer["required_consumable_ids"]
+                        ),
+                        "covered_consumable_ids": tuple(
+                            offer["covered_consumable_ids"]
+                        ),
+                        "consumable_source_urls": tuple(
+                            offer["consumable_source_urls"].items()
+                        ),
+                    }
+                )
+                for offer in item["offers"]
+            ),
+        )
+        for item in _read_array(path)
+    )
+    _ensure_unique_ids(audits, "retailer basket audit")
+    return audits

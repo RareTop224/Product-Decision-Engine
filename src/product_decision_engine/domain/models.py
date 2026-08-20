@@ -48,6 +48,16 @@ class MaintenanceDataStatus(StrEnum):
     INCOMPLETE = "incomplete"
 
 
+class OfferAvailability(StrEnum):
+    IN_STOCK = "in_stock"
+    ORDERABLE_UNCONFIRMED = "orderable_unconfirmed"
+    EXPECTED = "expected"
+    TRANSIT = "transit"
+    UNAVAILABLE = "unavailable"
+    NOT_LISTED = "not_listed"
+    UNVERIFIED = "unverified"
+
+
 @dataclass(frozen=True, slots=True)
 class Product:
     id: str
@@ -142,6 +152,68 @@ class Evidence:
     observed_at: str
     verification_status: VerificationStatus
     notes: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class RetailerProductCoverage:
+    product_id: str
+    device_availability: OfferAvailability
+    device_price_rub: int | None
+    device_source_url: str | None
+    required_consumable_ids: tuple[str, ...]
+    covered_consumable_ids: tuple[str, ...]
+    consumable_source_urls: tuple[tuple[str, str], ...]
+    notes: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.device_price_rub is not None and self.device_price_rub < 0:
+            raise ValueError("device_price_rub must not be negative")
+        if len(set(self.required_consumable_ids)) != len(self.required_consumable_ids):
+            raise ValueError("required_consumable_ids must be unique")
+        if len(set(self.covered_consumable_ids)) != len(self.covered_consumable_ids):
+            raise ValueError("covered_consumable_ids must be unique")
+        unknown = set(self.covered_consumable_ids) - set(self.required_consumable_ids)
+        if unknown:
+            raise ValueError(
+                "covered consumables must be required: " + ", ".join(sorted(unknown))
+            )
+        sourced = {consumable_id for consumable_id, _ in self.consumable_source_urls}
+        if sourced != set(self.covered_consumable_ids):
+            raise ValueError("every covered consumable must have exactly one source URL")
+
+    @property
+    def consumables_complete(self) -> bool:
+        return set(self.covered_consumable_ids) == set(self.required_consumable_ids)
+
+    @property
+    def complete(self) -> bool:
+        return (
+            self.device_availability == OfferAvailability.IN_STOCK
+            and self.device_price_rub is not None
+            and self.consumables_complete
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class RetailerBasketAudit:
+    id: str
+    retailer: str
+    observed_at: str
+    source_type: str
+    verification_status: VerificationStatus
+    scenario_id: str
+    offers: tuple[RetailerProductCoverage, ...]
+
+    def __post_init__(self) -> None:
+        product_ids = [offer.product_id for offer in self.offers]
+        if len(product_ids) < 2:
+            raise ValueError("retailer basket audit must compare at least two products")
+        if len(set(product_ids)) != len(product_ids):
+            raise ValueError("retailer basket audit product ids must be unique")
+
+    @property
+    def complete(self) -> bool:
+        return all(offer.complete for offer in self.offers)
 
 
 @dataclass(frozen=True, slots=True)

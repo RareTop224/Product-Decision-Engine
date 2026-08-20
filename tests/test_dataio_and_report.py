@@ -6,11 +6,16 @@ from collections import Counter
 from dataclasses import replace
 from pathlib import Path
 
-from product_decision_engine.dataio import load_catalog, load_scenarios
+from product_decision_engine.dataio import (
+    load_catalog,
+    load_retailer_basket_audits,
+    load_scenarios,
+)
 from product_decision_engine.domain.models import UsageScenario
 from product_decision_engine.evidence import audit_product
 from product_decision_engine.evaluation.report import (
     build_report,
+    evaluate_full_tco_ablation,
     evaluate_price_robustness,
     evaluate_scenario,
 )
@@ -28,6 +33,9 @@ class DataAndReportTests(unittest.TestCase):
 
         catalog = load_catalog(data_dir)
         scenarios = load_scenarios(data_dir / "scenarios.json")
+        basket_audits = load_retailer_basket_audits(
+            data_dir / "retailer_basket_audits.json"
+        )
 
         self.assertEqual(len(catalog.products), 30)
         self.assertEqual(len(catalog.prices), 108)
@@ -79,6 +87,11 @@ class DataAndReportTests(unittest.TestCase):
         xerox_b230_conflict = audit_product(catalog, catalog.product("xerox-b230"))
         self.assertEqual(len(xerox_b230_conflict.conflicts), 1)
         self.assertEqual(len(scenarios), 15)
+        self.assertEqual(len(basket_audits), 3)
+        self.assertTrue(all(not audit.complete for audit in basket_audits))
+        kns_audit = next(audit for audit in basket_audits if audit.retailer == "KNS")
+        self.assertTrue(all(offer.consumables_complete for offer in kns_audit.offers))
+        self.assertFalse(kns_audit.complete)
 
     def test_g3411_exact_bundle_uses_two_starter_black_bottles(self) -> None:
         catalog = load_catalog(PROJECT_ROOT / "data" / "golden")
@@ -132,8 +145,11 @@ class DataAndReportTests(unittest.TestCase):
         data_dir = PROJECT_ROOT / "data" / "golden"
         catalog = load_catalog(data_dir)
         scenarios = load_scenarios(data_dir / "scenarios.json")
+        basket_audits = load_retailer_basket_audits(
+            data_dir / "retailer_basket_audits.json"
+        )
 
-        report = build_report(catalog, scenarios)
+        report = build_report(catalog, scenarios, basket_audits)
 
         self.assertIn("Статус Фазы 0: `REASSESS`", report)
         self.assertNotIn("Статус Фазы 0: `GO`", report)
@@ -165,7 +181,44 @@ class DataAndReportTests(unittest.TestCase):
         self.assertIn("Ценовая устойчивость той же матрицы", report)
         self.assertIn("0 / 12 точек с диапазоном", report)
         self.assertIn("5 / 12 точек с диапазоном", report)
+        self.assertIn("## Проверка синхронных корзин одного продавца", report)
+        self.assertIn("полных одновременно покупаемых корзин — **0 из 3**", report)
+        self.assertIn("Basket-aware TCO не рассчитан", report)
+        self.assertIn("## Ablation полного TCO", report)
+        self.assertIn("Упрощённый baseline даёт **Epson EcoTank L4260** преимущество 3 209 ₽", report)
+        self.assertIn("уменьшает обязательные покупки на 3 670 ₽ больше", report)
+        self.assertIn("выигрывает всего 461 ₽", report)
         self.assertNotIn("Phase 0 evaluation report", report)
+
+    def test_full_tco_ablation_reconstructs_teacher_winner_flip(self) -> None:
+        data_dir = PROJECT_ROOT / "data" / "golden"
+        catalog = load_catalog(data_dir)
+        scenario = next(
+            item
+            for item in load_scenarios(data_dir / "scenarios.json")
+            if item.id == "teacher-mixed"
+        )
+
+        hp = evaluate_full_tco_ablation(
+            catalog, catalog.product("hp-smart-tank-720"), scenario
+        )
+        epson = evaluate_full_tco_ablation(
+            catalog, catalog.product("epson-ecotank-l4260"), scenario
+        )
+
+        self.assertEqual(
+            (hp.simplified_tco_rub, hp.starter_credit_rub, hp.maintenance_cost_rub, hp.full_tco_rub),
+            (41_927, 6_876, 0, 35_051),
+        )
+        self.assertEqual(
+            (
+                epson.simplified_tco_rub,
+                epson.starter_credit_rub,
+                epson.maintenance_cost_rub,
+                epson.full_tco_rub,
+            ),
+            (38_718, 3_206, 0, 35_512),
+        )
 
     def test_price_robustness_detects_observed_winner_flip(self) -> None:
         winner_catalog = make_mono_catalog(prefix="winner", purchase_price=10_000)
